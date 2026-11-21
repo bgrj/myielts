@@ -224,16 +224,27 @@ html[data-text="xl"]{font-size:22px}
 .filter-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .filter-row .search{flex:1 1 220px}
 .filter-row select{flex:1 1 148px;min-height:42px}
-.import-guide{margin:8px 0 14px;padding-left:1.2rem;display:grid;gap:8px}
-.mine-panel .form-field{margin-top:14px}
-.mine-panel>.help-text{margin:8px 0 0}
+.import-guide{margin:0;padding-left:1.2rem;display:grid;gap:8px}
+.mine-panel .form-field{margin-top:14px;font-size:.95rem;color:inherit}
+.mine-panel .form-field textarea{font-size:1rem;line-height:1.55}
+.mine-panel>.help-text,.import-lead{margin:8px 0 0}
+.import-lead{max-width:68ch}
+.scope-field select{width:min(100%,16rem);min-height:44px}
 .import-guide li{line-height:1.6}
-.import-actions,.play-bar,.lesson-go{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.play-bar,.lesson-go{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.import-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.import-actions .btn,.import-actions select{width:100%;min-height:44px}
+@media(max-width:640px){
+  .import-actions{grid-template-columns:1fr 1fr}
+  .import-actions .btn:first-child{grid-column:1 / -1}
+}
 .lesson-go{margin-top:12px}
 .lesson-go select,.play-bar select,.inline-choice select{min-height:42px}
 .lesson-go select{flex:1;min-width:9rem}
 .inline-choice{display:grid;gap:4px;font-size:.92rem;min-width:9rem}
-.import-example{margin-top:12px}
+.import-example{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#f6f8f4;display:grid;gap:12px}
+.import-example .template{margin:0}
+html[data-theme="dark"] .import-example{background:#15201c}
 .offscreen-file{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 #support-dialog{width:min(640px,calc(100vw - 32px))}
 #support-dialog .dialog-header p{margin-top:6px;color:#708071;font-size:.95rem}

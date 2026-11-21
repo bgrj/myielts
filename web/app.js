@@ -505,21 +505,25 @@ function appearancePanel() {
 function materialPanel() {
   const scope = state.settings.studyScope || 'all';
   return `<section class="panel wide mine-panel"><h2>${t('导入想学的原题和错题', 'Add the sentences you want')}</h2>
-    <ol class="import-guide">
-      <li>${t('粘贴进来的句子会进入今日学习的复习排期，也能在随手练习里按出处练习。已经有的复习进度会保留。', 'Pasted sentences join today’s review schedule and can be practised by source. Review progress you already have is kept.')}</li>
-      <li>${t('每条至少两行。第一行写出处，例如「出处: 剑雅 18 · Test 2 · Passage 1」。下一行写原句，例如「原句: The city became increasingly congested.」', 'Each item needs at least two lines. First the source, for example “source: Cambridge IELTS 18 · Test 2 · Passage 1”. Next the sentence, for example “sentence: The city became increasingly congested.”')}</li>
-      <li>${t('想重点记的一段，再写「考点: congested」。不写的话，整句用来填空或听写。释义、翻译、错因、讲解可以接着写。', 'Add “focus: congested” for the part you want to remember. Leave it out to practise the whole sentence. A gloss, translation, what you missed and a note can follow.')}</li>
-      <li>${t('下一条之前单独一行写 ---。听力若有录音，写「音频: 文件名.mp3」。多句共用一段时，再写「开始」和「结束」，单位是秒。', 'Before the next item, put --- on its own line. For a recording, add “audio: file.mp3”. If several sentences share one file, add start and end in seconds.')}</li>
-      <li>${t('写好后粘贴到下面，点「导入知识卡」。从文件导入、给句子配音频，或手动记一条，都在「其他方式」里。音频只保存在这台设备。', 'Paste it below and choose Import cards. Importing a file, attaching audio, or adding one card by hand are under Other ways. Audio stays on this device.')}</li>
-    </ol>
-    <div class="settings-row scope-choice"><label for="study-scope">${t('学习范围', 'What to study')}</label><select id="study-scope">${[['all', t('全部', 'Everything')], ['mine', t('只学我导入的', 'Only what I added')], ['builtin', t('只学站内', 'Only built-in')]].map(([value, label]) => `<option value="${value}" ${scope === value ? 'selected' : ''}>${label}</option>`).join('')}</select></div>
-    <p class="help-text">${t('学习范围决定今日学习排哪些：全部、只排你导入的，或只排站内资料。', 'This chooses what today schedules: everything, only what you added, or only the built-in material.')}</p>
+    <p class="help-text import-lead">${t('把要学、要练、要复习的原句贴到下面，再点「导入知识卡」。怎么写，打开「预览示例」。', 'Paste the sentences you want to study, practise and review, then choose Import cards. Open Preview an example to see the format.')}</p>
+    <label class="form-field scope-field">${t('学习范围', 'What to study')}<select id="study-scope" aria-label="${t('学习范围', 'What to study')}">${[['all', t('全部', 'Everything')], ['mine', t('只学我导入的', 'Only what I added')], ['builtin', t('只学站内', 'Only built-in')]].map(([value, label]) => `<option value="${value}" ${scope === value ? 'selected' : ''}>${label}</option>`).join('')}</select></label>
+    <p class="help-text">${t('今日学习按这里排：全部、只排你导入的，或只排站内资料。', 'Today is scheduled from this: everything, only what you added, or only the built-in material.')}</p>
     <label class="form-field" for="import-json">${t('粘贴你的原题或错题', 'Paste your sentences')}<textarea id="import-json" rows="7" placeholder="${t('出处: 剑雅 18 · Test 2 · Passage 1\n原句: 在这里贴上你要记的原句', 'source: Cambridge IELTS 18 · Test 2 · Passage 1\nsentence: Paste the sentence you want to remember')}"></textarea></label>
-    <div class="import-actions"><button class="btn" data-action="import-paste">${t('导入知识卡', 'Import cards')}</button><label class="inline-choice">${t('其他方式', 'Other ways')}<select id="import-extra"><option value="">${t('选择…', 'Choose…')}</option><option value="file">${t('从文件导入', 'From a file')}</option><option value="audio">${t('配套音频', 'Matching audio')}</option><option value="manual">${t('手动记一条', 'Add one card')}</option></select></label><button class="btn btn-quiet" type="button" data-action="toggle-example" aria-expanded="false" aria-controls="import-example">${t('预览示例', 'Preview an example')}</button></div>
+    <div class="import-actions"><button class="btn" data-action="import-paste">${t('导入知识卡', 'Import cards')}</button><select id="import-extra" aria-label="${t('其他方式', 'Other ways')}"><option value="">${t('其他方式', 'Other ways')}</option><option value="file">${t('从文件导入', 'From a file')}</option><option value="audio">${t('配套音频', 'Matching audio')}</option><option value="manual">${t('手动记一条', 'Add one card')}</option></select><button class="btn btn-secondary" type="button" data-action="toggle-example" aria-expanded="false" aria-controls="import-example">${t('预览示例', 'Preview an example')}</button></div>
     <input id="import-file" class="offscreen-file" data-file="cards" type="file" accept=".json,.txt,text/plain,application/json" tabindex="-1">
     <input id="import-audio" class="offscreen-file" data-file="clips" type="file" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.webm,.flac" multiple tabindex="-1">
     <p id="import-error" class="error-text" role="alert"></p>
-    <div id="import-example" class="import-example" hidden><p class="help-text">${t('下面是一条阅读、一条听力。把出处和原句换成你要学、要练、要复习的内容即可，不用下载。', 'One reading item and one listening item. Replace the source and sentence with what you want to study, practise and review. There is nothing to download.')}</p><pre class="template">${esc(EXAMPLE_PACK)}</pre></div>
+    <div id="import-example" class="import-example" hidden>
+      <ol class="import-guide">
+        <li>${t('粘贴进来的句子会进入今日学习的复习排期，也能在随手练习里按出处练习。已经有的复习进度会保留。', 'Pasted sentences join today’s review schedule and can be practised by source. Review progress you already have is kept.')}</li>
+        <li>${t('每条至少两行。第一行写出处，例如「出处: 剑雅 18 · Test 2 · Passage 1」。下一行写原句，例如「原句: The city became increasingly congested.」', 'Each item needs at least two lines. First the source, for example “source: Cambridge IELTS 18 · Test 2 · Passage 1”. Next the sentence, for example “sentence: The city became increasingly congested.”')}</li>
+        <li>${t('想重点记的一段，再写「考点: congested」。不写的话，整句用来填空或听写。释义、翻译、错因、讲解可以接着写。', 'Add “focus: congested” for the part you want to remember. Leave it out to practise the whole sentence. A gloss, translation, what you missed and a note can follow.')}</li>
+        <li>${t('下一条之前单独一行写 ---。听力若有录音，写「音频: 文件名.mp3」。多句共用一段时，再写「开始」和「结束」，单位是秒。', 'Before the next item, put --- on its own line. For a recording, add “audio: file.mp3”. If several sentences share one file, add start and end in seconds.')}</li>
+        <li>${t('写好后粘贴到上面的框里，点「导入知识卡」。从文件导入、给句子配音频，或手动记一条，都在「其他方式」里。音频只保存在这台设备。', 'Paste it into the box above and choose Import cards. Importing a file, attaching audio, or adding one card by hand are under Other ways. Audio stays on this device.')}</li>
+      </ol>
+      <p class="help-text">${t('下面是一条阅读、一条听力。把出处和原句换成你自己的，再粘贴到上面即可，不用下载。', 'One reading item and one listening item. Replace the source and sentence with your own, paste it above, and there is nothing to download.')}</p>
+      <pre class="template">${esc(EXAMPLE_PACK)}</pre>
+    </div>
   </section>`;
 }
 function renderSettings() {
@@ -628,7 +632,7 @@ document.addEventListener('click', async event => {
   const { action, id } = button.dataset;
   if (action === 'open-feedback') { const dialog = $('#feedback-dialog'); if (dialog && !dialog.open) dialog.showModal(); }
   if (action === 'open-support') { const dialog = $('#support-dialog'); if (dialog && !dialog.open) dialog.showModal(); }
-  if (action === 'toggle-example') { const box = $('#import-example'); if (box) { box.hidden = !box.hidden; button.setAttribute('aria-expanded', String(!box.hidden)); } }
+  if (action === 'toggle-example') { const box = $('#import-example'); if (box) { box.hidden = !box.hidden; const open = !box.hidden; button.setAttribute('aria-expanded', String(open)); button.textContent = open ? t('收起示例', 'Hide example') : t('预览示例', 'Preview an example'); } }
   if (action === 'start-review') startSession();
   if (action === 'study-mine') startMine(button.dataset.source);
   if (action === 'set-scope' && ['all', 'mine', 'builtin'].includes(button.dataset.scope)) {
