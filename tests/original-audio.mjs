@@ -29,13 +29,14 @@ try {
   await page.locator('[data-action="open-card"][data-id="c10-t1-s1-sentence-002"]').click();
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller, undefined, { polling:100 });
-  await page.locator('#card-dialog').getByRole('button',{name:'播放原音',exact:true}).click();
+  await page.locator('#card-dialog').getByRole('button',{name:'播放',exact:true}).click();
   await page.waitForFunction(() => window.__players.at(-1)?.currentTime > .15, undefined, { polling:100 });
   const first = await page.evaluate(() => ({ duration:window.__players.at(-1).duration, src:window.__players.at(-1).src, synth:window.__synthCount }));
   assert.ok(first.duration > 1 && first.duration < 4); assert.equal(first.synth,0); assert.ok(first.src.includes('c10-t1-s1-sentence-002-'));
   await page.getByRole('button',{name:'停止',exact:true}).click();
   await page.evaluate(() => {window.__players.at(-1).__times=[];});
-  await page.getByRole('button',{name:'原音三遍',exact:true}).click();
+  await page.locator('#card-dialog select[aria-label="播放方式"]').selectOption('triple');
+  await page.locator('#card-dialog').getByRole('button',{name:'播放',exact:true}).click();
   await page.waitForFunction(() => document.querySelector('[data-original-status]')?.textContent.includes('共 3 遍'), undefined, { polling:100, timeout:45000 });
   const triple = await page.evaluate(() => ({times:window.__players.at(-1).__times,duration:window.__players.at(-1).duration,synth:window.__synthCount}));
   assert.equal(triple.times.length,3); assert.equal(triple.synth,0);
@@ -44,7 +45,8 @@ try {
   const cached = await page.evaluate(async url => {const names=await caches.keys();const key=names.find(n=>n.endsWith('original-audio-v1'));return key ? !!await (await caches.open(key)).match(url) : false;}, first.src);
   assert.ok(cached,'original audio must be stored for offline playback');
   await context.setOffline(true);
-  await page.getByRole('button',{name:'播放原音',exact:true}).click();
+  await page.locator('#card-dialog select[aria-label="播放方式"]').selectOption('once');
+  await page.locator('#card-dialog').getByRole('button',{name:'播放',exact:true}).click();
   await page.waitForFunction(() => window.__players.at(-1)?.currentTime > .15 && !window.__players.at(-1).paused, undefined, {polling:100});
   await mkdir('.test-artifacts',{recursive:true});
   await page.screenshot({path:'.test-artifacts/mobile-original-audio.png',fullPage:true});

@@ -21,7 +21,8 @@ try {
   assert.ok(await originalBackupInput.evaluate(el => el.isConnected), 'background updates must not replace a file input while the user is choosing a backup');
   await page.locator('[data-feed-status="reading"]').waitFor();
   assert.ok((await page.locator('[data-feed-status="reading"]').innerText()).includes('6 条'));
-  await page.getByRole('button', { name: '复制阅读 bot 配置指令' }).click();
+  await page.locator('#copy-kind').selectOption('reading');
+  await page.getByRole('button', { name: '复制', exact: true }).click();
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   assert.ok(copied.includes('content/reading.json') && copied.includes('不用让我复制 JSON'));
   await mkdir('.test-artifacts', { recursive: true });

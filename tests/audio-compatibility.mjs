@@ -27,20 +27,21 @@ for(const name of engines){
       const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
       await page.goto(base+'#library',{waitUntil:'domcontentloaded',timeout:60000});await page.locator('#library-search').fill('housing');
       await page.locator('[data-action="open-card"][data-id="c17-t1-p1-087"]').click();
-      await page.getByRole('button',{name:'自然英音朗读',exact:true}).click();
+      await page.locator('#card-dialog').getByRole('button',{name:'播放',exact:true}).click();
       assert.ok(await page.locator('#card-dialog #audio-dock').isVisible(),'native controls remain usable inside a modal');
       if(fallback){await page.locator('#audio-resume').waitFor({state:'visible'});await page.locator('#audio-resume').click();}
       await page.waitForFunction(()=>document.querySelector('#shared-audio').currentTime>.2,undefined,{timeout:25000});
       assert.equal(await page.evaluate(()=>window.__synth),0);
       assert.ok((await page.locator('#shared-audio').getAttribute('src')).includes('/recordings/reading-'));
-      await page.getByRole('button',{name:'慢速朗读',exact:true}).click();
+      await page.locator('#card-dialog select[aria-label="播放方式"]').selectOption('slow');
+      await page.locator('#card-dialog').getByRole('button',{name:'播放',exact:true}).click();
       await page.waitForFunction(()=>document.querySelector('#shared-audio').currentTime>.2);
       assert.equal(await page.locator('#shared-audio').evaluate(a=>a.playbackRate),.8);
       await page.getByRole('button',{name:'关闭播放器',exact:true}).click();
       await page.getByRole('button',{name:'关闭知识卡'}).click();
       await page.getByRole('link',{name:'随手练习',exact:true}).click();
-      await page.locator('[data-action="lesson"][data-lesson="self-drive"][data-mode="continue"]').click();
-      await page.getByRole('button',{name:'播放原音',exact:true}).click();
+      await page.locator('[data-action="lesson"][data-lesson="self-drive"]').click();
+      await page.getByRole('button',{name:'播放',exact:true}).click();
       await page.waitForFunction(()=>document.querySelector('#shared-audio').currentTime>.2);
       assert.equal(await page.evaluate(()=>window.__synth),0);
       await page.getByRole('button',{name:'回忆好了，核对答案'}).click();await page.getByRole('button',{name:/^记住/}).click();

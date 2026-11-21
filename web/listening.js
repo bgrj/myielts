@@ -11,6 +11,21 @@ export function lessonQueue(cards, state, lessonId, mode = 'continue', now = Dat
   return ordered.filter(c => !state.progress[c.id]);
 }
 
+export function findLessonSentences(cards, query, limit = 8) {
+  const q = String(query || '').trim().toLowerCase();
+  if (!q) return [];
+  const number = /^\d+$/.test(q) ? Number(q) : null;
+  const ranked = [];
+  for (const card of cards) {
+    if (number !== null && card.order === number) { ranked.push({ card, score: 0 }); continue; }
+    const hay = [card.order, card.speaker, card.sentence, card.translation, card.meaning, card.title].join(' ').toLowerCase();
+    const at = hay.indexOf(q);
+    if (at >= 0) ranked.push({ card, score: at + 1 });
+  }
+  ranked.sort((a, b) => a.score - b.score || a.card.order - b.card.order || String(a.card.lessonId).localeCompare(String(b.card.lessonId)));
+  return ranked.slice(0, limit).map(item => item.card);
+}
+
 export function validateLessons(lessons, cards) {
   if (!Array.isArray(lessons) || lessons.length < 2 || lessons.length > 100) throw new Error('听力发布必须保留完整课程清单');
   const ids = new Set();

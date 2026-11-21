@@ -13,7 +13,7 @@ try {
   await page.getByRole('heading', { name: '每一句，都记住一点。' }).waitFor();
   await page.screenshot({ path: '.test-artifacts/mobile-today.png', fullPage: true });
   assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
-  assert.equal(await page.locator('.stat-value').first().innerText(), '0条知识');
+  assert.equal(await page.locator('.stat-value').first().innerText(), '0');
   await page.getByRole('button', { name: '开始今日学习' }).click();
   await page.locator('#study-answer').fill('my own answer');
   await page.getByRole('button', { name: '回忆好了，核对答案' }).click();
@@ -30,7 +30,7 @@ try {
   assert.equal(await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('myielts.state.v1')).progress).length), 5);
   await page.reload();
   await page.getByRole('heading', { name: '每一句，都记住一点。' }).waitFor();
-  assert.equal(await page.locator('.stat-value').first().innerText(), '5条知识');
+  assert.equal(await page.locator('.stat-value').first().innerText(), '5');
   await page.getByRole('link', { name: '我的知识库' }).click();
   await page.locator('#library-search').fill('housing');
   await page.locator('[data-action="open-card"][data-id="c17-t1-p1-087"]').click();
@@ -39,8 +39,8 @@ try {
   await page.locator('#card-dialog').getByRole('button', { name: /^收藏 housing/ }).click();
   await page.getByRole('button', { name: '关闭知识卡' }).click();
   await page.getByRole('link', { name: '随手练习' }).click();
-  await page.locator('[data-action="lesson"][data-lesson="self-drive"][data-mode="continue"]').click();
-  assert.ok(await page.getByRole('button', { name: '播放原音' }).isVisible());
+  await page.locator('[data-action="lesson"][data-lesson="self-drive"]').click();
+  assert.ok(await page.getByRole('button', { name: '播放', exact: true }).isVisible());
   await page.getByRole('button', { name: '回忆好了，核对答案' }).click();
   await page.getByRole('button', { name: /^记住/ }).click();
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).events.length), 6);
@@ -75,7 +75,8 @@ try {
   assert.equal(await page.locator('.library-card').count(), 1);
   assert.equal(await page.locator('.library-card img').count(), 0);
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).events.length), originalEvents);
-  await page.getByRole('button', { name: '新增知识卡' }).click();
+  await page.getByRole('link', { name: '资料与设置' }).click();
+  await page.locator('#import-extra').selectOption('manual');
   await page.locator('[name="target"]').fill('in place');
   await page.locator('[name="meaning"]').fill('已经到位');
   await page.locator('[name="source"]').fill('剑雅 17 · Test 1 · Passage 1');
@@ -83,6 +84,7 @@ try {
   await page.locator('[name="sentence"]').fill('By 1907, the heart of today’s Underground system was in place.');
   await page.getByRole('button', { name: '保存知识卡' }).click();
   assert.ok(await page.locator('#edit-dialog').isHidden());
+  await page.getByRole('link', { name: '我的知识库' }).click();
   // Offline app shell + data, followed by a real search.
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);

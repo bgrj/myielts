@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#153f35">
   <meta name="description" content="你的剑雅原句学习本。回到语境，在阅读与精听中练习，用间隔复习慢慢记牢。">
+  <script>
+    try {
+      var saved = JSON.parse(localStorage.getItem('myielts.state.v1') || '{}').settings || {};
+      if (saved.theme === 'dark') {
+        document.documentElement.dataset.theme = 'dark';
+        document.querySelector('meta[name="theme-color"]').content = '#101816';
+      }
+      if (saved.language === 'en') document.documentElement.lang = 'en';
+      if (['sm', 'md', 'lg', 'xl'].indexOf(saved.textSize) >= 0) document.documentElement.dataset.text = saved.textSize;
+    } catch (e) {}
+  </script>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>MyIELTS · 每一句，都记住一点</title>
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
@@ -13,33 +24,41 @@
   <script type="module" src="./app.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到学习内容</a>
+  <a class="skip-link" href="#main" data-ui="skip">跳到学习内容</a>
   <div id="storage-warning" class="warning" hidden role="alert"></div>
   <div class="app-shell">
     <aside class="sidebar">
-      <a href="#today" class="brand" aria-label="MyIELTS 首页"><span class="brand-icon">m<span>i</span></span><span>myielts<span class="brand-caption">我的剑雅学习本</span></span></a>
-      <nav class="navigation" aria-label="主要导航">
-        <a href="#today" data-nav="today"><span data-icon="sun"></span><span>今日学习</span><span class="nav-count" id="nav-due">0</span></a>
-        <a href="#practice" data-nav="practice"><span data-icon="practice"></span><span>随手练习</span></a>
-        <a href="#library" data-nav="library"><span data-icon="book"></span><span>我的知识库</span></a>
-        <a href="#settings" data-nav="settings"><span data-icon="settings"></span><span>资料与设置</span></a>
+      <a href="#today" class="brand" data-ui-aria="brand" aria-label="MyIELTS 首页"><span class="brand-icon">m<span>i</span></span><span>myielts<span class="brand-caption" data-ui="caption">我的剑雅学习本</span></span></a>
+      <nav class="navigation" data-ui-aria="nav" aria-label="主要导航">
+        <a href="#today" data-nav="today"><span data-icon="sun"></span><span data-ui="nav-today">今日学习</span><span class="nav-count" id="nav-due">0</span></a>
+        <a href="#practice" data-nav="practice"><span data-icon="practice"></span><span data-ui="nav-practice">随手练习</span></a>
+        <a href="#library" data-nav="library"><span data-icon="book"></span><span data-ui="nav-library">我的知识库</span></a>
+        <a href="#settings" data-nav="settings"><span data-icon="settings"></span><span data-ui="nav-settings">资料与设置</span></a>
       </nav>
-      <div class="sidebar-note"><span class="small-label">A LITTLE, EVERY DAY</span><p>不急着学更多，<br>先把学过的记牢。</p><div class="offline-state"><span id="connection-dot"></span><span id="connection-label">学习本准备中</span></div></div>
-      <a class="repo-link" href="https://github.com/bgrj/myielts" target="_blank" rel="noopener">GitHub · 我的学习本 <span data-icon="external"></span></a>
+      <div class="sidebar-note"><div class="offline-state"><span id="connection-dot"></span><span id="connection-label">学习本准备中</span></div></div>
     </aside>
     <div class="workspace">
-      <header class="topbar"><span class="breadcrumb">MY LEARNING SPACE <span>/</span> <span id="page-label">今日学习</span></span><div class="topbar-right"><span id="today-date"></span><button class="icon-button" id="quick-add" aria-label="新增知识卡" title="新增知识卡"><span data-icon="plus"></span></button></div></header>
-      <main id="main" tabindex="-1"><div class="loading-state">正在打开你的学习本…</div></main>
-      <footer class="page-footer"><span>每一次回忆，都让记忆更牢一点。</span><span>MyIELTS · 个人学习空间</span></footer>
+      <header class="topbar"><span class="breadcrumb" id="page-label">今日学习</span><div class="topbar-right"><span id="today-date"></span><button class="feedback-entry" id="open-support" type="button" data-action="open-support" data-ui-aria="support" aria-label="支持这个学习本" title="支持"><span data-icon="heart"></span><span data-ui="support-label">支持</span></button><button class="feedback-entry" id="open-feedback" type="button" data-action="open-feedback" data-ui-aria="feedback" aria-label="意见收集箱" title="意见收集箱"><span data-icon="chat"></span><span data-ui="feedback-label">意见</span></button></div></header>
+      <main id="main" tabindex="-1"><div class="loading-state" data-ui="loading">正在打开你的学习本…</div></main>
+      <footer class="page-footer"><span data-ui="footer-right">MyIELTS</span></footer>
     </div>
   </div>
+  <dialog id="support-dialog" aria-labelledby="support-heading">
+    <div class="dialog-header"><div><h2 id="support-heading" data-ui="support-heading">支持 Our beings</h2><p data-ui="support-lead">和主站同一处。选一个你方便的渠道即可。</p></div><button class="icon-button" type="button" data-action="close-dialog" data-ui-aria="support-close" aria-label="关闭支持"><span data-icon="close"></span></button></div>
+    <div class="support-channels"><a class="btn" href="https://afdian.com/a/ourbeings" target="_blank" rel="noopener noreferrer">爱发电</a><div class="support-codes"><figure><img src="./support-alipay.png" alt="支付宝收款码" width="1182" height="1772"><figcaption>支付宝</figcaption></figure><figure><img src="./support-wepay.png" alt="微信收款码" width="1118" height="1524"><figcaption>微信</figcaption></figure></div></div>
+  </dialog>
+  <dialog id="feedback-dialog" aria-labelledby="feedback-heading">
+    <div class="dialog-header"><div><h2 id="feedback-heading" data-ui="feedback-heading">优化改善意见收集箱</h2><p data-ui="feedback-lead">这个工具哪里不顺手，扫码进微信群说一声。</p></div><button class="icon-button" type="button" data-action="close-dialog" data-ui-aria="feedback-close" aria-label="关闭意见收集箱"><span data-icon="close"></span></button></div>
+    <img id="feedback-qr" class="feedback-qr" src="./wechat-feedback.png" alt="微信群二维码：Mi 优化改善意见收集箱" width="680" height="1024">
+    <p class="help-text" data-ui="feedback-note">群名：Mi 优化改善意见收集箱。群码有效期至 11 月 29 日，进群后会更新。</p>
+  </dialog>
   <dialog id="card-dialog" aria-labelledby="dialog-heading"></dialog>
   <dialog id="edit-dialog" aria-labelledby="edit-heading"></dialog>
-  <aside id="audio-dock" class="audio-dock" hidden aria-label="音频播放器">
-    <div class="audio-dock-heading"><strong id="audio-title">音频播放</strong><button type="button" class="text-button dark" data-action="close-audio" aria-label="关闭播放器">关闭</button></div>
-    <audio id="shared-audio" controls preload="none" playsinline webkit-playsinline aria-label="学习音频播放器"></audio>
+  <aside id="audio-dock" class="audio-dock" hidden data-ui-aria="audio-dock" aria-label="音频播放器">
+    <div class="audio-dock-heading"><strong id="audio-title">音频播放</strong><button type="button" class="text-button dark" data-action="close-audio" data-ui-aria="close-player" data-ui="close-player" aria-label="关闭播放器">关闭</button></div>
+    <audio id="shared-audio" controls preload="none" playsinline webkit-playsinline data-ui-aria="shared-audio" aria-label="学习音频播放器"></audio>
     <p id="audio-status" class="help-text" role="status"></p>
-    <div class="audio-dock-links"><button id="audio-resume" class="text-button dark" data-action="resume-audio" hidden>继续播放</button><a id="audio-direct" class="inline-link" target="_blank" rel="noopener">单独打开音频</a></div>
+    <div class="audio-dock-links"><button id="audio-resume" class="text-button dark" data-action="resume-audio" data-ui="resume" hidden>继续播放</button><a id="audio-direct" class="inline-link" data-ui="open-audio" target="_blank" rel="noopener">单独打开音频</a></div>
   </aside>
   <div id="toast" role="status" aria-live="polite"></div>
   <noscript>请启用 JavaScript 以打开学习卡片和复习安排。</noscript>

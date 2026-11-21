@@ -67,6 +67,52 @@ test('full backups validate and merge later progress without resetting it', () =
   assert.deepEqual(merged.favorites, [data[1].id]);
   assert.equal(validateBackup(merged).schemaVersion, 1);
 });
+test('language and theme survive backup and default on older files', () => {
+  const fresh = emptyState();
+  assert.equal(fresh.settings.language, 'zh');
+  assert.equal(fresh.settings.theme, 'light');
+  assert.equal(fresh.settings.studyScope, 'all');
+  assert.equal(fresh.settings.textSize, 'md');
+  const legacy = emptyState();
+  delete legacy.settings.language;
+  delete legacy.settings.theme;
+  assert.equal(validateBackup(legacy).settings.language, 'zh');
+  assert.equal(validateBackup(legacy).settings.theme, 'light');
+  delete legacy.settings.studyScope;
+  assert.equal(validateBackup(legacy).settings.studyScope, 'all');
+  delete legacy.settings.textSize;
+  assert.equal(validateBackup(legacy).settings.textSize, 'md');
+  const next = emptyState();
+  next.settings.language = 'en';
+  next.settings.theme = 'dark';
+  next.updatedAt = 10;
+  const merged = mergeBackup(emptyState(), next);
+  assert.equal(merged.settings.language, 'en');
+  assert.equal(merged.settings.theme, 'dark');
+  assert.throws(() => validateBackup({ ...emptyState(), settings: { ...emptyState().settings, theme: 'blue' } }));
+  assert.throws(() => validateBackup({ ...emptyState(), settings: { ...emptyState().settings, language: 'fr' } }));
+  assert.throws(() => validateBackup({ ...emptyState(), settings: { ...emptyState().settings, studyScope: 'all-of-it' } }));
+  assert.throws(() => validateBackup({ ...emptyState(), settings: { ...emptyState().settings, textSize: 'huge' } }));
+});
+test('self-study listening enters the daily queue without original audio', () => {
+  const state = emptyState();
+  const card = { id: 'mine-1', kind: 'listening', source: '我的场景', selfStudy: true };
+  assert.equal(queueFor([card], state, now)[0].id, 'mine-1');
+  assert.equal(queueFor([{ ...card, selfStudy: false }], state, now).length, 0);
+});
+test('personal audio name and clip stay on the card', () => {
+  const base = data[0];
+  const [card] = validateCards([{ ...base, audioName: 'room.mp3', audioStart: 12, audioEnd: 18, localAudio: { id: 'file-abc123' } }]);
+  assert.equal(card.audioName, 'room.mp3');
+  assert.equal(card.audioStart, 12);
+  assert.equal(card.audioEnd, 18);
+  assert.equal(card.localAudio.id, 'file-abc123');
+  assert.equal(validateCards([base])[0].audioName, undefined);
+  assert.throws(() => validateCards([{ ...base, audioName: '../room.mp3' }]));
+  assert.throws(() => validateCards([{ ...base, audioStart: 1 }]));
+  assert.throws(() => validateCards([{ ...base, audioStart: 0, audioEnd: 400 }]));
+  assert.throws(() => validateCards([{ ...base, localAudio: { id: '../x' } }]));
+});
 test('imports reject malformed, future-schema and malicious records before writing', () => {
   assert.throws(() => validateCards([data[0], data[0]]));
   assert.throws(() => validateCards([{ ...data[0], focus: 'not in the original' }]));

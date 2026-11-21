@@ -6,7 +6,7 @@ export function dayKey(now = Date.now()) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 }
 export function emptyState() {
-  return { schemaVersion: VERSION, cards: [], librarySnapshot: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 1 }, updatedAt: 0 };
+  return { schemaVersion: VERSION, cards: [], librarySnapshot: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 1, language: 'zh', theme: 'light', studyScope: 'all', textSize: 'md' }, updatedAt: 0 };
 }
 export function schedule(previous, rating, now = Date.now()) {
   if (!['again', 'hard', 'good', 'easy'].includes(rating)) throw new Error('无效评分');
@@ -19,12 +19,13 @@ export function schedule(previous, rating, now = Date.now()) {
   return { stage, due: now + interval, reps: old.reps + 1, lapses: old.lapses + (rating === 'again' ? 1 : 0), lastReviewed: now };
 }
 export function queueFor(cards, state, now = Date.now(), kind = 'all') {
-  const ready = cards.filter(c => c.kind !== 'listening' || c.audio);
+  const ready = cards.filter(c => c.kind !== 'listening' || c.audio || c.selfStudy);
   const due = ready.filter(c => (kind === 'all' || c.kind === kind) && state.progress[c.id]?.due <= now)
     .sort((a, b) => state.progress[a.id].due - state.progress[b.id].due);
   const started = new Set(state.events.filter(e => e.day === dayKey(now) && e.isNew).map(e => e.cardId)).size;
   const allowance = Math.max(0, state.settings.dailyNew - started);
-  const fresh = ready.filter(c => !state.progress[c.id] && (kind === 'listening' ? c.kind === 'listening' : c.kind === 'reading') && (kind === 'all' || c.kind === kind));
+  const wants = c => kind === 'listening' ? c.kind === 'listening' : kind === 'reading' ? c.kind === 'reading' : (c.kind === 'reading' || (c.kind === 'listening' && c.selfStudy));
+  const fresh = ready.filter(c => !state.progress[c.id] && wants(c) && (kind === 'all' || c.kind === kind));
   // Interleave sources: a day's new cards need not all come from one passage.
   const groups = new Map();
   for (const c of fresh) { if (!groups.has(c.source)) groups.set(c.source, []); groups.get(c.source).push(c); }
@@ -54,10 +55,10 @@ export function validateCards(cards) {
       if (typeof value !== 'string' || value.length > 12000) throw new Error(prefix + `${key} 需为不超过 12,000 字的文本`);
       result[key] = value.trim();
     }
-    if (!result.meaning && !result.translation && !result.note) throw new Error(prefix + '需提供中文释义、翻译或难点解释');
     result.tags = Array.isArray(card.tags) ? card.tags.filter(x => typeof x === 'string').slice(0, 10).map(x => x.slice(0, 30)) : [];
     result.fragment = card.fragment === true;
     result.sourceVerified = card.sourceVerified === true;
+    result.selfStudy = card.selfStudy === true;
     if (card.lessonId !== undefined) {
       if (card.kind !== 'listening' || !validId(card.lessonId) || !Number.isInteger(card.order) || card.order < 1 || card.order > 2000) throw new Error(prefix + '听力课程编号或句序无效');
       result.lessonId = card.lessonId; result.order = card.order;
@@ -70,6 +71,22 @@ export function validateCards(cards) {
       const { start = 0, end } = card.audio;
       if (!Number.isFinite(start) || start < 0 || !Number.isFinite(end) || end <= start || end - start > 300) throw new Error(prefix + '原音片段需为 0–300 秒的有效时间范围');
       result.audio = { url: url.href, start, end };
+    }
+    if (card.audioName != null && card.audioName !== '') {
+      if (typeof card.audioName !== 'string' || !card.audioName.trim() || card.audioName.trim().length > 180 || /[\\/]/.test(card.audioName) || card.audioName.includes('..') || /^[a-z][a-z0-9+.-]*:/i.test(card.audioName)) throw new Error(prefix + '音频文件名无效');
+      result.audioName = card.audioName.trim();
+    }
+    const startBlank = card.audioStart == null || card.audioStart === '';
+    const endBlank = card.audioEnd == null || card.audioEnd === '';
+    if (!startBlank || !endBlank) {
+      const start = Number(card.audioStart), end = Number(card.audioEnd);
+      if (startBlank || endBlank || !Number.isFinite(start) || start < 0 || !Number.isFinite(end) || end <= start || end - start > 300) throw new Error(prefix + '音频片段需成对填写，且在 0–300 秒内；整段播放请不要填开始和结束');
+      result.audioStart = start;
+      result.audioEnd = end;
+    }
+    if (card.localAudio != null) {
+      if (!plain(card.localAudio) || !validId(card.localAudio.id)) throw new Error(prefix + '本地音频无效');
+      result.localAudio = { id: card.localAudio.id };
     }
     return result;
   });
@@ -99,7 +116,12 @@ export function validateBackup(data) {
   if (!Array.isArray(data.favorites) || data.favorites.some(x => !validId(x))) throw new Error('备份收藏列表无效');
   result.favorites = [...new Set(data.favorites)];
   if (!plain(data.settings) || !Number.isInteger(data.settings.dailyNew) || !number(data.settings.dailyNew, 0, 30) || !number(data.settings.rate, 0.5, 1.2)) throw new Error('设置无效');
-  result.settings = { dailyNew: data.settings.dailyNew, rate: data.settings.rate };
+  const language = data.settings.language === undefined ? 'zh' : data.settings.language;
+  const theme = data.settings.theme === undefined ? 'light' : data.settings.theme;
+  const studyScope = data.settings.studyScope === undefined ? 'all' : data.settings.studyScope;
+  const textSize = data.settings.textSize === undefined ? 'md' : data.settings.textSize;
+  if (!['zh', 'en'].includes(language) || !['light', 'dark'].includes(theme) || !['all', 'mine', 'builtin'].includes(studyScope) || !['sm', 'md', 'lg', 'xl'].includes(textSize)) throw new Error('设置无效');
+  result.settings = { dailyNew: data.settings.dailyNew, rate: data.settings.rate, language, theme, studyScope, textSize };
   result.updatedAt = number(data.updatedAt, 0, 1e14) ? data.updatedAt : 0;
   return result;
 }

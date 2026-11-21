@@ -1,9 +1,9 @@
 const PREFIX = 'myielts-' + new URL(self.registration.scope).pathname.replaceAll('/', '_') + '-';
-const CACHE = PREFIX + 'myielts-v1-20261121';
+const CACHE = PREFIX + 'myielts-v1-20261122f';
 const AUDIO_CACHE = PREFIX + 'original-audio-v1';
-const SHELL = ['./', './index.html', './style.css', './app.js', './core.js', './compat.js', './publishing.js', './feed-client.js', './listening.js', './data/cards.json', './data/listening.json', './data/reading-audio.json', './manifest.webmanifest', './icon.svg'];
+const SHELL = ['./', './index.html', './style.css', './app.js', './core.js', './pack.js', './audio-store.js', './i18n.js', './compat.js', './publishing.js', './feed-client.js', './listening.js', './data/cards.json', './data/listening.json', './data/reading-audio.json', './manifest.webmanifest', './icon.svg', './wechat-feedback.png', './support-alipay.png', './support-wepay.png'];
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith(PREFIX) && k !== CACHE && k !== AUDIO_CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));

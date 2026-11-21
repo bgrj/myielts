@@ -42,7 +42,8 @@ export function publishedCards(base, feeds, local = []) {
   base.forEach(add);
   for (const kind of Object.keys(PUBLISHERS)) for (const c of feeds[kind]?.cards || []) add(c);
   local.forEach(add);
-  return [...merged.values()].filter(c => c.kind !== 'listening' || c.lessonId);
+  const localIds = new Set(local.map(c => c.id));
+  return [...merged.values()].filter(c => c.kind !== 'listening' || c.lessonId || localIds.has(c.id));
 }
 
 export function preparePublication(existing, batch, base = [], now = new Date().toISOString()) {
