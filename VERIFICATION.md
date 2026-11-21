@@ -29,3 +29,12 @@
 评分、收藏和学习进度保存在本人浏览器，尚无跨设备自动同步与后台提醒。可导出完整备份迁移。Grok的GitHub写权限已由用户确认，但本站不能修改其私人记忆；最终两份指令由用户发送给bot，bot实际提交后才算完成其首次发布验证。
 
 Vercel账号尚未安装GitHub集成，网站代码使用已连接Vercel工具发布；日常学习内容与朗读索引通过GitHub实时内容源更新，无需重新部署。
+
+## 最终线上核对完成（2026-11-22）
+
+- 生产部署 `dpl_ASuHeVpQ7WcpTdQw7rVdBw6fUgyN`，READY，源码提交 `67fbf868ba07ba6db1dd3117174b13b0e06830ad`。正式入口 https://ourbeings.com/ielts/ ，备用 https://myielts-five.vercel.app/ 。
+- 自有域名上Chromium、Firefox、WebKit全部实际播放测试通过，包括自然英音、原声、慢速、原生弹窗内播放器、缺失接口回退与首次播放被拒后的继续。WebKit首次线上load等待超时一次，改按DOM可交互状态等待后独立重跑两组均通过。
+- 正式域名的完整课程顺序、刷新恢复、到期复习、原音三遍/3秒间隔及离线播放均通过；听力源revision3共157句，朗读源74句，主站及学习页均HTTP200。
+- GitHub main已包含448份完整材料目录，431个独立LFS对象上传全部完成。448项路径、大小、SHA256与指针一致；从media.githubusercontent.com下载真实MP3（203386字节）、PDF（634203字节）、JPG（81271字节）样本，均与清单SHA256完全一致，非指针文本。详细结果在本地.test-artifacts/remote-material-verification.json。
+- GitHub网站验证工作流成功：https://github.com/bgrj/myielts/actions/runs/44924752352 。自然朗读自动更新工作流成功：https://github.com/bgrj/myielts/actions/runs/44924752339 。
+- 阅读与听力最终长期指令已分别写入prompts/reading.txt、prompts/listening.txt，网页设置可一键复制；听力明确包含ANNOUNCER且不自动推送第三场景，阅读注明自然合成朗读及自动补齐方式。

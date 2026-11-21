@@ -25,7 +25,7 @@ for(const name of engines){
         }
       },fallback);
       const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
-      await page.goto(base+'#library');await page.locator('#library-search').fill('housing');
+      await page.goto(base+'#library',{waitUntil:'domcontentloaded',timeout:60000});await page.locator('#library-search').fill('housing');
       await page.locator('[data-action="open-card"][data-id="c17-t1-p1-087"]').click();
       await page.getByRole('button',{name:'自然英音朗读',exact:true}).click();
       assert.ok(await page.locator('#card-dialog #audio-dock').isVisible(),'native controls remain usable inside a modal');
