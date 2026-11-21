@@ -1,8 +1,13 @@
-name: Verify and deploy MyIELTS
+name: Verify MyIELTS and optional Pages deploy
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      deploy_pages:
+        description: Deploy to GitHub Pages (enable Pages in repository settings first)
+        type: boolean
+        default: false
 permissions:
   contents: read
   pages: write
@@ -23,10 +28,13 @@ jobs:
       - run: npm test
       - run: npm run build
       - uses: actions/configure-pages@v5
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages
       - uses: actions/upload-pages-artifact@v4
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages
         with:
           path: dist
   deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -2,7 +2,7 @@
 
 手机打开，在你的剑雅原句中学习、练习和复习。原生 HTML / CSS / JavaScript，零运行时第三方依赖，无账号、无广告。
 
-在线地址：**https://bgrj.github.io/myielts/**
+网站部署在用户已授权的 Vercel `bgrjs-projects / myielts` 项目；源码保存在本仓库。[Vercel 项目](https://vercel.com/bgrjs-projects/myielts)
 
 ## 已有内容
 
@@ -72,6 +72,8 @@ npm run build
 
 ## 部署与域名
 
-推送 `main` 自动执行测试、构建并部署 GitHub Pages。仓库 Settings → Pages 的 Source 使用 GitHub Actions。部署工作流见 [.github/workflows/pages.yml](.github/workflows/pages.yml)。
+推送 `main` 自动执行测试和构建。生产网站使用 Vercel 静态托管，配置见 [vercel.json](vercel.json)。首次发布通过已连接的 Vercel 工具上传与 GitHub 提交一致的源码；当前账号未安装 Vercel GitHub integration，因此后续 GitHub 推送还不会自动部署到 Vercel。安装集成并关联 `bgrj/myielts` 后可启用 Git 自动发布。
 
-GitHub Pages 默认地址已足够使用，无需域名。以后可接入 `ielts.ourbeings.com`；先在 Pages 设置添加域名，再为子域添加指向 `bgrj.github.io` 的 CNAME 记录，等待验证并开启 HTTPS。不要为此替换已有根域站点或 nameserver。
+仓库另保留 GitHub Pages 备用发布流程：先在 Settings → Pages 将 Source 设为 GitHub Actions，再手动运行 [.github/workflows/pages.yml](.github/workflows/pages.yml) 并勾选 `deploy_pages`。Pages 未启用时，正常推送仅验证，避免发布失败。备用网址是 `https://bgrj.github.io/myielts/`。
+
+默认托管地址已足够使用，无需购买域名。目前未修改 `ourbeings.com` 的 DNS。以后可在当前托管项目接入 `ielts.ourbeings.com`，按平台返回的 DNS 目标配置该子域。不要为此替换已有根域站点或 nameserver。
