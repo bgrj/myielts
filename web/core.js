@@ -5,7 +5,7 @@ export function dayKey(now = Date.now()) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 }
 export function emptyState() {
-  return { schemaVersion: VERSION, cards: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 0.85 }, updatedAt: 0 };
+  return { schemaVersion: VERSION, cards: [], librarySnapshot: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 0.85 }, updatedAt: 0 };
 }
 export function schedule(previous, rating, now = Date.now()) {
   if (!['again', 'hard', 'good', 'easy'].includes(rating)) throw new Error('无效评分');
@@ -18,11 +18,12 @@ export function schedule(previous, rating, now = Date.now()) {
   return { stage, due: now + interval, reps: old.reps + 1, lapses: old.lapses + (rating === 'again' ? 1 : 0), lastReviewed: now };
 }
 export function queueFor(cards, state, now = Date.now(), kind = 'all') {
-  const due = cards.filter(c => (kind === 'all' || c.kind === kind) && state.progress[c.id]?.due <= now)
+  const ready = cards.filter(c => c.kind !== 'listening' || c.audio);
+  const due = ready.filter(c => (kind === 'all' || c.kind === kind) && state.progress[c.id]?.due <= now)
     .sort((a, b) => state.progress[a.id].due - state.progress[b.id].due);
   const started = new Set(state.events.filter(e => e.day === dayKey(now) && e.isNew).map(e => e.cardId)).size;
   const allowance = Math.max(0, state.settings.dailyNew - started);
-  const fresh = cards.filter(c => !state.progress[c.id] && (kind === 'all' || c.kind === kind));
+  const fresh = ready.filter(c => !state.progress[c.id] && (kind === 'all' || c.kind === kind));
   // Interleave sources: a day's new cards need not all come from one passage.
   const groups = new Map();
   for (const c of fresh) { if (!groups.has(c.source)) groups.set(c.source, []); groups.get(c.source).push(c); }
@@ -47,7 +48,7 @@ export function validateCards(cards) {
     for (const key of ['target', 'sentence', 'focus', 'source']) if (typeof card[key] !== 'string' || !card[key].trim()) throw new Error(prefix + `缺少 ${key}`);
     if (!card.sentence.toLowerCase().includes(card.focus.toLowerCase())) throw new Error(prefix + 'focus 必须出现在原句中');
     const result = { id: card.id, kind: card.kind };
-    for (const key of ['target', 'meaning', 'sentence', 'focus', 'source', 'title', 'translation', 'ipa', 'note', 'collocations', 'related', 'etymology', 'personalError', 'originalRef', 'origin']) {
+    for (const key of ['target', 'meaning', 'sentence', 'focus', 'source', 'title', 'translation', 'ipa', 'note', 'collocations', 'related', 'etymology', 'personalError', 'originalRef', 'origin', 'feedback', 'speaker', 'pronunciation', 'grammar', 'audioSource']) {
       const value = card[key] ?? '';
       if (typeof value !== 'string' || value.length > 12000) throw new Error(prefix + `${key} 需为不超过 12,000 字的文本`);
       result[key] = value.trim();
@@ -55,6 +56,16 @@ export function validateCards(cards) {
     if (!result.meaning && !result.translation && !result.note) throw new Error(prefix + '需提供中文释义、翻译或难点解释');
     result.tags = Array.isArray(card.tags) ? card.tags.filter(x => typeof x === 'string').slice(0, 10).map(x => x.slice(0, 30)) : [];
     result.fragment = card.fragment === true;
+    result.sourceVerified = card.sourceVerified === true;
+    if (card.audio != null) {
+      if (!plain(card.audio) || typeof card.audio.url !== 'string' || card.audio.url.length > 2000) throw new Error(prefix + '原音信息无效');
+      let url; try { url = new URL(card.audio.url); } catch { throw new Error(prefix + '原音 URL 无效'); }
+      const loopbackPreview = typeof location !== 'undefined' && url.protocol === 'http:' && url.origin === location.origin && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+      if ((url.protocol !== 'https:' && !loopbackPreview) || url.username || url.password) throw new Error(prefix + '原音需为无凭据的 HTTPS 链接');
+      const { start = 0, end } = card.audio;
+      if (!Number.isFinite(start) || start < 0 || !Number.isFinite(end) || end <= start || end - start > 300) throw new Error(prefix + '原音片段需为 0–300 秒的有效时间范围');
+      result.audio = { url: url.href, start, end };
+    }
     return result;
   });
 }
@@ -62,6 +73,13 @@ export function validateBackup(data) {
   if (!plain(data) || data.schemaVersion !== VERSION) throw new Error('备份版本不受支持，需要 schemaVersion: 1');
   const result = emptyState();
   result.cards = validateCards(data.cards);
+  result.librarySnapshot = validateCards(data.librarySnapshot || []);
+  if (data.localCardIds !== undefined) {
+    if (!Array.isArray(data.localCardIds) || data.localCardIds.some(id => !validId(id) || !result.cards.some(c => c.id === id))) throw new Error('备份中的个人编辑标记无效');
+    const local = new Set(data.localCardIds);
+    result.librarySnapshot = [...new Map([...result.librarySnapshot, ...result.cards.filter(c => !local.has(c.id))].map(c => [c.id, c])).values()];
+    result.cards = result.cards.filter(c => local.has(c.id));
+  }
   const number = (x, min, max) => Number.isFinite(x) && x >= min && x <= max;
   if (!plain(data.progress)) throw new Error('备份缺少有效 progress');
   for (const [id, p] of Object.entries(data.progress)) {
@@ -86,6 +104,7 @@ export function mergeBackup(current, incoming) {
   const newIsLatest = other.updatedAt >= current.updatedAt;
   const cardMap = new Map((newIsLatest ? [...current.cards, ...other.cards] : [...other.cards, ...current.cards]).map(c => [c.id, c]));
   out.cards = [...cardMap.values()];
+  out.librarySnapshot = [...new Map((newIsLatest ? [...(current.librarySnapshot || []), ...other.librarySnapshot] : [...other.librarySnapshot, ...(current.librarySnapshot || [])]).map(c => [c.id, c])).values()];
   for (const [id, p] of Object.entries(other.progress)) if (!out.progress[id] || p.lastReviewed > out.progress[id].lastReviewed) out.progress[id] = p;
   out.events = [...new Map([...current.events, ...other.events].map(e => [e.id, e])).values()].sort((a, b) => a.at - b.at);
   out.favorites = [...new Set([...current.favorites, ...other.favorites])];

@@ -6,7 +6,16 @@ const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; ch
 http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, 'http://localhost');
-    let rel = decodeURIComponent(url.pathname).replace(/^\/myielts(?=\/)/, '');
+    let rel = decodeURIComponent(url.pathname).replace(/^\/(?:myielts|ielts)(?=\/)/, '');
+    if (/^\/feeds\/(reading|listening)\.json$/.test(rel)) {
+      const kind = rel.includes('reading') ? 'reading' : 'listening';
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
+      res.end(await readFile(`content/${kind}.json`)); return;
+    }
+    if (/^\/recordings\/[a-z0-9-]+\.mp3$/.test(rel)) {
+      res.writeHead(200, { 'Content-Type': 'audio/mpeg', 'Cache-Control': 'public, max-age=31536000, immutable' });
+      res.end(await readFile(`content/audio/${rel.split('/').pop()}`)); return;
+    }
     let file = path.resolve(root, '.' + rel);
     if (!file.startsWith(root + path.sep) && file !== root) throw new Error();
     if ((await stat(file)).isDirectory()) file = path.join(file, 'index.html');

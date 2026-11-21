@@ -40,7 +40,7 @@ try {
   await page.getByRole('button', { name: '关闭知识卡' }).click();
   await page.getByRole('link', { name: '随手练习' }).click();
   await page.getByRole('button', { name: /精听听写/ }).click();
-  assert.ok(await page.getByRole('button', { name: '播放合成语音' }).isVisible());
+  assert.ok(await page.getByRole('button', { name: '播放原音' }).isVisible());
   await page.getByRole('button', { name: '回忆好了，核对答案' }).click();
   await page.getByRole('button', { name: '继续练习' }).click();
   assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).events.length), 5);

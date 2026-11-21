@@ -1,0 +1,10 @@
+请为我启用“反馈后更新 MyIELTS”并保存为长期工作规则。你负责阅读，botId 是 0eca5200-224b-4af8-b13a-6fd4f4762592。
+学习网址：https://ourbeings.com/ielts/
+源码与内容仓库：https://github.com/bgrj/myielts ，分支 main。
+先读取仓库 BOT-PUBLISHING.md、content/schema.json 与 MATERIALS.md / MATERIALS.json。真题、解析和原声音频已按原目录存放，Git LFS 文件要读取实际内容，不能把指针当原文或音频。按本次练习的书册/Test/Passage/Section 获取需要的材料即可。GitHub 已连接且有本仓库写权限；若登录失效，请展示连接卡让我完成授权，不要向我要明文 token。
+以后我像往常一样反馈生词、搭配、语法疑问、没听清的片段、听错的词，或说“再加几个”，你整理完成后直接发布到 content/reading.json，不用让我复制 JSON 或手动导入网页。只有从我反馈中提取的知识点可以进入学习源；未经我反馈的陌生内容不要扩充。
+每条保存我的原始难点反馈 feedback、真实剑雅原句/录音片段、精确出处、整句译文及针对性解释；原句与材料核对后才标 sourceVerified:true。不要把改写句或猜测的原文当真题原句。追加词汇补入同一篇；同一知识点沿用稳定 id，补充 just、acoustics、salt depot 等疑问时保留原有解释并纠正无依据推断。
+发布前读取最新内容和 web/data/cards.json，沿用已有 id，合并旧条目，revision 加 1，写入真实 updatedAt。优先在安全的已有 GitHub 登录下运行 scripts/publish-feedback.mjs 校验并发布；使用 GitHub app 写文件时也必须遵循同样校验和 SHA 冲突重读规则。只改你负责的 content 文件，不改网页代码、母版真题或另一 bot 的内容。不要自动推进下一篇或加入我没有反馈的陌生内容。
+我的这条规则授权你发布我反馈后的这些学习笔记到此公开仓库，发布范围限上述文件。不要发布整段私人对话或凭据，也不要重复上传整套真题。若当前 Grok 的安全设置仍要求确认，清楚告诉我需要处理的具体一步，不能虚称已发布。
+发布后从线上读取对应 /feeds/reading.json，核对 revision 和条目 id，再回复提交链接、更新的知识点数和学习网址。若失败保留待发布内容并说明原因，不声称已同步。
+先按我已经反馈并核实的内容完成一次真实发布，验证后把这个流程保存为技能；今后在每次反馈整理完成后使用。

@@ -4498,7 +4498,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "省略号后不截",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-01-79700f96050b.mp3",
+      "start": 0,
+      "end": 3.369796
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：You will hear a number of different recordings；省略号后不截"
   },
   {
     "id": "c10-t1-s1-02",
@@ -4521,7 +4530,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "紧接上一句 and...",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-02-369b02c1f0fc.mp3",
+      "start": 0,
+      "end": 3.84
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：and you will have to answer questions on what you hear；紧接上一句 and..."
   },
   {
     "id": "c10-t1-s1-03",
@@ -4544,7 +4562,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "你写的是 structions,实际有 in-",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-03-99edd4f8e602.mp3",
+      "start": 0,
+      "end": 4.754286
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：There will be time for you to read the instructions and questions；你写的是 structions,实际有 in-"
   },
   {
     "id": "c10-t1-s1-04",
@@ -4567,7 +4594,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "省略号后不截",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-04-aeaee5fe7f76.mp3",
+      "start": 0,
+      "end": 2.925714
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：and you will have a chance to check your work；省略号后不截"
   },
   {
     "id": "c10-t1-s1-05",
@@ -4590,7 +4626,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "录音读 four,不是数字 4",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-05-60c45fb4ec54.mp3",
+      "start": 0,
+      "end": 2.977959
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：The test is in four sections.；录音读 four,不是数字 4"
   },
   {
     "id": "c10-t1-s1-06",
@@ -4613,7 +4658,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "你犹豫 At / Of",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-06-ed8f1f35c472.mp3",
+      "start": 0,
+      "end": 1.959184
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：At the end of the test；你犹豫 At / Of"
   },
   {
     "id": "c10-t1-s1-07",
@@ -4636,7 +4690,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "前后省略;customer 不是 custumer",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-07-0dbf81cba182.mp3",
+      "start": 0,
+      "end": 3.474286
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：between a travel agent and a customer；前后省略;customer 不是 custumer"
   },
   {
     "id": "c10-t1-s1-08",
@@ -4659,7 +4722,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "你犹豫 that / what is",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-08-f709b032f249.mp3",
+      "start": 0,
+      "end": 4.493061
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：You will see that there is an example that has been done for you；你犹豫 that / what is"
   },
   {
     "id": "c10-t1-s1-09",
@@ -4682,7 +4754,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "取示例播放中第一次出现",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-09-00c814daf166.mp3",
+      "start": 0,
+      "end": 4.310204
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：I want some information on self-drive tours in the USA.；取示例播放中第一次出现"
   },
   {
     "id": "c10-t1-s1-10",
@@ -4705,7 +4786,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "customer's 不是 custumer's",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-10-523faccb63d6.mp3",
+      "start": 0,
+      "end": 7.235918
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：The customer's name is Andrea Brown, so Brown has been written in the space.；customer's 不是 custumer's"
   },
   {
     "id": "c10-t1-s1-11",
@@ -4728,7 +4818,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "你犹豫 should / shall;实际是 shall",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-11-1f241981772a.mp3",
+      "start": 0,
+      "end": 1.933061
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Now we shall begin.；你犹豫 should / shall;实际是 shall"
   },
   {
     "id": "c10-t1-s1-12",
@@ -4751,7 +4850,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "原文有 the questions;是 recording(单数),不是 recordings",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-12-b5d0c37d9cc6.mp3",
+      "start": 0,
+      "end": 6.922449
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：You should answer the questions as you listen because you will not hear the recording a second time.；原文有 the questions;是 recording(单数),不是 recordings"
   },
   {
     "id": "c10-t1-s1-13",
@@ -4774,7 +4882,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "1 to 6 读作 one to six",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-13-f709b79d11ec.mp3",
+      "start": 0,
+      "end": 4.466939
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "播音员 · ANNOUNCER",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Listen carefully and answer questions 1 to 6.；1 to 6 读作 one to six"
   },
   {
     "id": "c10-t1-s1-14",
@@ -4797,7 +4914,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-14-7a53a33f7d93.mp3",
+      "start": 0,
+      "end": 1.854694
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Is a mobile alright?"
   },
   {
     "id": "c10-t1-s1-15",
@@ -4820,7 +4946,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "到 Tours? 为止,不含 From a friend?",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-15-da62cbd54eb9.mp3",
+      "start": 0,
+      "end": 3.004082
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：And can I ask you where you heard about World Tours?；到 Tours? 为止,不含 From a friend?"
   },
   {
     "id": "c10-t1-s1-16",
@@ -4843,7 +4978,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-16-f617a9e80518.mp3",
+      "start": 0,
+      "end": 2.298776
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Or did you see an advert somewhere?"
   },
   {
     "id": "c10-t1-s1-17",
@@ -4866,7 +5010,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-17-5c582ba401ea.mp3",
+      "start": 0,
+      "end": 2.66449
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：No, I read about you in the newspaper."
   },
   {
     "id": "c10-t1-s1-18",
@@ -4889,7 +5042,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "原文 brochures 是复数;in the post 是英式「邮寄」;后面 but... 已截掉",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-18-83d322c92eec.mp3",
+      "start": 0,
+      "end": 2.821224
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：OK, I'll get the brochures in the post to you.；原文 brochures 是复数;in the post 是英式「邮寄」;后面 but... 已截掉"
   },
   {
     "id": "c10-t1-s1-19",
@@ -4912,7 +5074,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "后半 I've got two children... 已截掉",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-19-b133822d72a8.mp3",
+      "start": 0,
+      "end": 3.500408
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：I'm interested in going to California with my family.；后半 I've got two children... 已截掉"
   },
   {
     "id": "c10-t1-s1-20",
@@ -4935,7 +5106,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-20-9de933f83192.mp3",
+      "start": 0,
+      "end": 5.459592
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：We have a couple of self-drive tours there visiting different places of interest in California."
   },
   {
     "id": "c10-t1-s1-21",
@@ -4958,7 +5138,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "是 some of the theme parks,the 不要漏",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-21-60e78669127e.mp3",
+      "start": 0,
+      "end": 5.616327
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：The first one begins in Los Angeles and there's plenty of time to visit some of the theme parks there.；是 some of the theme parks,the 不要漏"
   },
   {
     "id": "c10-t1-s1-22",
@@ -4981,7 +5170,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-22-c02f966f402d.mp3",
+      "start": 0,
+      "end": 4.257959
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：That's something on my children's list, so I'd want to include that."
   },
   {
     "id": "c10-t1-s1-23",
@@ -5004,7 +5202,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "从 where 起截,前面 Yosemite Park 不收录",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-23-8f4269823b92.mp3",
+      "start": 0,
+      "end": 2.298776
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：where you spend a couple of nights；从 where 起截,前面 Yosemite Park 不收录"
   },
   {
     "id": "c10-t1-s1-24",
@@ -5027,7 +5234,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-24-decfa4b44740.mp3",
+      "start": 0,
+      "end": 3.291429
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：You can choose to stay in a lodge or on the campsite."
   },
   {
     "id": "c10-t1-s1-25",
@@ -5050,7 +5266,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "后半是 It'd,不是 could",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-25-67f337212ed7.mp3",
+      "start": 0,
+      "end": 4.310204
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：I don't like the idea of staying in a tent. It'd be too hot.；后半是 It'd,不是 could"
   },
   {
     "id": "c10-t1-s1-26",
@@ -5073,7 +5298,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "不含前面的 Right.",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-26-62fff554c537.mp3",
+      "start": 0,
+      "end": 2.089796
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：And the tour ends in Las Vegas.；不含前面的 Right."
   },
   {
     "id": "c10-t1-s1-27",
@@ -5096,7 +5330,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "两句按你的条目一并截取",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-27-1bdb6fb5f799.mp3",
+      "start": 0,
+      "end": 4.937143
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：The other trip we can arrange is slightly different. It starts in San Francisco.；两句按你的条目一并截取"
   },
   {
     "id": "c10-t1-s1-28",
@@ -5119,7 +5362,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-28-99680233764b.mp3",
+      "start": 0,
+      "end": 2.298776
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Then you drive south to Cambria."
   },
   {
     "id": "c10-t1-s1-29",
@@ -5142,7 +5394,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "原文是 there's,不是 that there is",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-29-693b3e087857.mp3",
+      "start": 0,
+      "end": 5.511837
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Someone told me there's a really nice castle near Cambria. Will we go near that?；原文是 there's,不是 that there is"
   },
   {
     "id": "c10-t1-s1-30",
@@ -5165,7 +5426,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "从 is 起截;前面 Hearst Castle 按省略号去掉",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-30-5b2bd13dcd28.mp3",
+      "start": 0,
+      "end": 2.66449
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：is on that road, so you could stop there.；从 is 起截;前面 Hearst Castle 按省略号去掉"
   },
   {
     "id": "c10-t1-s1-31",
@@ -5188,7 +5458,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-31-d5a120f4c06b.mp3",
+      "start": 0,
+      "end": 2.66449
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Does this trip also go into the desert?"
   },
   {
     "id": "c10-t1-s1-32",
@@ -5211,7 +5490,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "是 Santa Monica,不是 San Monica;从地名起截",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-32-bb345c776211.mp3",
+      "start": 0,
+      "end": 3.813878
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Santa Monica where most people like to stop and do some shopping；是 Santa Monica,不是 San Monica;从地名起截"
   },
   {
     "id": "c10-t1-s1-33",
@@ -5234,7 +5522,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-33-c88ea4ad8fe0.mp3",
+      "start": 0,
+      "end": 4.04898
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：We have enough of that at home so that doesn't interest us."
   },
   {
     "id": "c10-t1-s1-34",
@@ -5257,7 +5554,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "从 Well 起截,不含前面的 OK.",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-34-81b2c6384f09.mp3",
+      "start": 0,
+      "end": 2.821224
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：Well you could go straight on to San Diego.；从 Well 起截,不含前面的 OK."
   },
   {
     "id": "c10-t1-s1-35",
@@ -5280,7 +5586,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "是 That's,不是 That is",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-35-cfd7066cf1c1.mp3",
+      "start": 0,
+      "end": 2.35102
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：That's good for beaches, isn't it?；是 That's,不是 That is"
   },
   {
     "id": "c10-t1-s1-36",
@@ -5303,7 +5618,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "从第二个 that's 起截;前面 That's right 已去掉",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-36-f7dfe67f38bd.mp3",
+      "start": 0,
+      "end": 5.146122
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：that's a good place to relax and your children might like to visit the zoo before flying home.；从第二个 that's 起截;前面 That's right 已去掉"
   },
   {
     "id": "c10-t1-s1-37",
@@ -5326,7 +5650,16 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-37-c7ee528777a0.mp3",
+      "start": 0,
+      "end": 4.388571
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · JAMIE(旅行顾问)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：They aren't included. But these hotels offer dinner in the price."
   },
   {
     "id": "c10-t1-s1-38",
@@ -5349,6 +5682,15 @@
     ],
     "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
     "personalError": "不含前面的 OK. Well, thank you very much.",
-    "fragment": true
+    "fragment": true,
+    "audio": {
+      "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-38-603b6a3bfa49.mp3",
+      "start": 0,
+      "end": 3.082449
+    },
+    "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取",
+    "speaker": "对话 · ANDREA(顾客)",
+    "sourceVerified": true,
+    "feedback": "原有38句精听反馈：I'll be in touch when I've had a chance to look at the brochure.；不含前面的 OK. Well, thank you very much."
   }
 ]

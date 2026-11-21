@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "kind": "listening",
+  "botId": "e79fc4f8-184b-450b-b10e-a21f91070599",
+  "revision": 1,
+  "updatedAt": "2026-11-21T14:33:33.339872+00:00",
+  "publisher": "verified-feedback",
+  "cards": [
+    {
+      "id": "c10-t1-s1-06",
+      "kind": "listening",
+      "target": "At",
+      "meaning": "在考试结束时。",
+      "sentence": "At the end of the test",
+      "focus": "At the end of the test",
+      "source": "剑雅 10 · Test 1 · Section 1",
+      "title": "旅行自驾游预订",
+      "translation": "在考试结束时。",
+      "ipa": "/ Of 为什么容易听不清:实际是 At the end of the test。At /",
+      "note": "拼接位置:01:16.95 起(三遍分别在 01:16.95,01:18.97,01:20.99;单遍约 1.5 秒) 原文:At the end of the test 截取说明:你犹豫 At / Of 为什么容易听不清:实际是 At the end of the test。At /ət/、of /əv/、两个 the 都弱读,整串几乎是 /ət ði ˈend əv ðə test/,所以 At 和 of 容易对调或听丢。后面 you will be given... 已按你的省略号截掉。",
+      "collocations": "",
+      "related": "",
+      "etymology": "",
+      "personalError": "你犹豫 At / Of",
+      "originalRef": "C10 T1 S1 · 难点第 06 句 · 拼接 01:16.95",
+      "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
+      "feedback": "At/（Of?）the end of test......；Section 1 里听不清的小词和发音。",
+      "speaker": "播音员 · ANNOUNCER",
+      "pronunciation": "拼接位置:01:16.95 起(三遍分别在 01:16.95,01:18.97,01:20.99;单遍约 1.5 秒) 原文:At the end of the test 截取说明:你犹豫 At / Of 为什么容易听不清:实际是 At the end of the test。At /ət/、of /əv/、两个 the 都弱读,整串几乎是 /ət ði ˈend əv ðə test/,所以 At 和 of 容易对调或听丢。后面 you will be given... 已按你的省略号截掉。",
+      "grammar": "",
+      "tags": [
+        "发音",
+        "精听"
+      ],
+      "fragment": true,
+      "sourceVerified": true,
+      "audio": {
+        "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-06-ed8f1f35c472.mp3",
+        "start": 0,
+        "end": 1.959184
+      },
+      "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取"
+    },
+    {
+      "id": "c10-t1-s1-11",
+      "kind": "listening",
+      "target": "should",
+      "meaning": "现在我们开始。",
+      "sentence": "Now we shall begin.",
+      "focus": "Now we shall begin",
+      "source": "剑雅 10 · Test 1 · Section 1",
+      "title": "旅行自驾游预订",
+      "translation": "现在我们开始。",
+      "ipa": "/ shall;实际是 shall 为什么容易听不清:雅思说明固定口播是 we shall begin,不是 should。shall /",
+      "note": "拼接位置:02:44.67 起(三遍分别在 02:44.67,02:46.66,02:48.65;单遍约 1.5 秒) 原文:Now we shall begin. 截取说明:你犹豫 should / shall;实际是 shall 为什么容易听不清:雅思说明固定口播是 we shall begin,不是 should。shall /ʃæl/ 元音比 should /ʃəd/ 更开、更短 促,后面 begin 重读。",
+      "collocations": "",
+      "related": "",
+      "etymology": "",
+      "personalError": "你犹豫 should / shall;实际是 shall",
+      "originalRef": "C10 T1 S1 · 难点第 11 句 · 拼接 02:44.67",
+      "origin": "个人学习笔记 · 原句已对照本地剑雅材料 · 译文为学习辅助",
+      "feedback": "Now we should/shall begin.；Section 1 中 should / shall 听不清。",
+      "speaker": "播音员 · ANNOUNCER",
+      "pronunciation": "拼接位置:02:44.67 起(三遍分别在 02:44.67,02:46.66,02:48.65;单遍约 1.5 秒) 原文:Now we shall begin. 截取说明:你犹豫 should / shall;实际是 shall 为什么容易听不清:雅思说明固定口播是 we shall begin,不是 should。shall /ʃæl/ 元音比 should /ʃəd/ 更开、更短 促,后面 begin 重读。",
+      "grammar": "",
+      "tags": [
+        "发音",
+        "精听"
+      ],
+      "fragment": true,
+      "sourceVerified": true,
+      "audio": {
+        "url": "https://ourbeings.com/ielts/recordings/c10-t1-s1-11-1f241981772a.mp3",
+        "start": 0,
+        "end": 1.933061
+      },
+      "audioSource": "剑雅 10 · Test 1 · Section 1 原录音；按个人38句发音障碍目录精确截取"
+    }
+  ]
+}

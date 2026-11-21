@@ -20,12 +20,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          lfs: false
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm run content:check
       - run: npm run build
       - uses: actions/configure-pages@v5
         if: github.event_name == 'workflow_dispatch' && inputs.deploy_pages

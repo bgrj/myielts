@@ -4,6 +4,8 @@
 
 **打开学习网站：https://ourbeings.com/ielts/**
 
+已挂载到你现有主站的雅思学习板块。
+
 网站部署在用户已授权的 Vercel `bgrjs-projects / myielts` 项目，生产状态 READY；源码保存在本仓库。[Vercel 项目](https://vercel.com/bgrjs-projects/myielts) · [验证记录](VERIFICATION.md)
 
 ## 已有内容
@@ -14,7 +16,7 @@
 - 剑雅 17 · Test 1 · Passage 2，体育场的过去、现在与未来：126 条。
 - 剑雅 10 · Test 1 · Section 1，旅行自驾游预订：38 句精听难点。
 
-阅读学习稿的改写例句已回到原文 PDF 核对并替换。题干中的 housing、incorporated into、the remains of 标明题干出处，原文脚注单独注明。中文译文是学习辅助。原 PDF、音频和私人聊天不提交到公开仓库。LICENSE 适用于本项目原创程序代码，剑雅原文片段的权利归原权利人。
+阅读学习稿的改写例句已回到原文 PDF 核对并替换。题干中的 housing、incorporated into、the remains of 标明题干出处，原文脚注单独注明。中文译文是学习辅助。用户另行要求把完整真题目录纳入 Git LFS 归档，详见完成后的 MATERIALS.md 与逐文件校验清单。私人聊天不提交。LICENSE 适用于本项目原创程序代码，试题、解析和录音的原有权利归属不变。
 
 ## 怎么用
 
@@ -25,7 +27,7 @@
 5. 「我的知识库」可搜索、按听力/阅读及出处筛选、收藏、查看和编辑。
 6. 「资料与设置」可以新增内容、导入 Grok JSON、调整每日新学量、导出完整备份。
 
-听写的默认声音是设备**合成语音**，不是剑雅考试录音。可在「随手练习」选择本地音频，用播放器定位；文件不上传，不跨会话保留。
+听力练习使用**对应剑雅原录音**。38句难点均已按用户时间目录精确截取，原音片段共约1.69 MB，按需加载。支持原速、慢速、三遍跟练（每遍间隔3秒），播放后支持离线回听；播放源和SHA-256见 `content/audio-manifest.json`。新增听力反馈必须带可核实原音，不能以TTS替代。阅读卡可使用合成朗读辅助跟读。
 
 首次联网打开并完成缓存后可离线使用。可在浏览器菜单添加到主屏幕。语音离线能力取决于手机已安装的声音。
 
@@ -47,7 +49,11 @@
 - [阅读 bot](https://x.ai/bot/rCEjuGhF-TVFft_2pDkqB)
 - [听力 bot](https://x.ai/bot/_m-HdAjjmGuyPPJH1ASnm)
 
-网站不读取私人聊天，也不自动连接 Grok API。在「资料与设置」复制整理指令发给 bot，把输出的 JSON 粘贴或作为文件导入。每条必须有真实原句、出处、难点解释，以及原样出现在 sentence 中的 focus。导入全批通过校验才写入，同 id 更新内容而保留学习进度。
+网站已接入阅读、听力两个独立发布源。Grok bot 将你反馈后的知识点提交到对应的 `content/reading.json` / `content/listening.json`，网页每分钟及返回前台时自动获取，统一用于学习、练习和复习；日常反馈更新不需要重新部署网页。追加内容沿用稳定 id，保留复习进度。
+
+首次在「资料与设置」复制各自的 bot 配置指令，分别发给阅读和听力 bot 一次，要求保存为长期规则。用户已确认 Grok GitHub 连接有仓库写权限；本站仍不能直接修改 bot 私人指令，需它们执行首次真实发布后，才能确认 bot 侧已经接通。[完整发布协议](BOT-PUBLISHING.md)
+
+只发布个人反馈后的难点及已核对的剑雅原句，不抓取整段私人历史。网站保留手动 JSON 导入作为备用。
 
 ## 数据与备份
 
@@ -65,6 +71,9 @@ npm run dev
 # http://127.0.0.1:4173/myielts/
 npm test
 npm run test:browser
+npm run test:sync-browser
+npm run test:audio-browser
+npm run content:check
 npm run build
 ```
 
@@ -78,4 +87,8 @@ npm run build
 
 仓库另保留 GitHub Pages 备用发布流程：先在 Settings → Pages 将 Source 设为 GitHub Actions，再手动运行 [.github/workflows/pages.yml](.github/workflows/pages.yml) 并勾选 `deploy_pages`。Pages 未启用时，正常推送仅验证，避免发布失败。备用网址是 `https://bgrj.github.io/myielts/`。
 
-默认托管地址已足够使用，无需购买域名。目前未修改 `ourbeings.com` 的 DNS。以后可在当前托管项目接入 `ielts.ourbeings.com`，按平台返回的 DNS 目标配置该子域。不要为此替换已有根域站点或 nameserver。
+正式入口为 `https://ourbeings.com/ielts/`。通过主站 Vercel 项目的两条精确路由挂载：`/ielts` 跳到 `/ielts/`，`/ielts/*` 代理学习项目。主站首页及其他路径保持现有路由；Cloudflare DNS、邮箱和域名注册配置未修改。路由配置记录见 [ops/ourbeings-routes.json](ops/ourbeings-routes.json)。备用托管地址为 `https://myielts-five.vercel.app/`。
+
+从旧 Vercel 地址迁移时，请先在旧地址导出完整备份，再在自有域名的「资料与设置」合并恢复。不同域名的浏览器本地进度不会自动迁移。
+
+网站通过同域 `/feeds/reading.json` 和 `/feeds/listening.json` 代理 GitHub 内容源，动态内容不经过 Service Worker 静态缓存；验证通过后另存离线副本。更新程序代码需部署，更新两份反馈源则直接生效。
