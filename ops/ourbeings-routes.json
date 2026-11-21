@@ -1,0 +1,12 @@
+{
+  "description": "Live project routing rules added for the user-requested learning section. Merge only these scoped rules when reproducing; do not overwrite other main-site routes.",
+  "domain": "ourbeings.com",
+  "learningUrl": "https://ourbeings.com/ielts/",
+  "mainProjectId": "prj_gKyGTciVxOeZ9rsxB8PbRgXx04ut",
+  "teamId": "team_5o0wx6DSYc9khJVA5KsJ09Br",
+  "liveVersionId": "0d303a7f-bc65-47d7-b49e-927b7a70a792",
+  "routes": [
+    { "id": "4436a111-b890-49f2-b89f-61916a0b3069", "name": "MyIELTS canonical learning path", "srcSyntax": "regex", "route": { "src": "^/ielts$", "dest": "/ielts/", "status": 308 } },
+    { "id": "e5458a4b-8bf9-407b-a80b-8b865da4c03a", "name": "MyIELTS learning section", "srcSyntax": "regex", "route": { "src": "^/ielts/(.*)$", "dest": "https://myielts-five.vercel.app/$1", "respectOriginCacheControl": true } }
+  ]
+}
