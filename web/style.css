@@ -232,11 +232,21 @@ html[data-text="xl"]{font-size:22px}
 .scope-field select{width:min(100%,16rem);min-height:44px}
 .import-guide li{line-height:1.6}
 .play-bar,.lesson-go{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.import-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
-.import-actions .btn,.import-actions select{width:100%;min-height:44px}
-@media(max-width:640px){
-  .import-actions{grid-template-columns:1fr 1fr}
-  .import-actions .btn:first-child{grid-column:1 / -1}
+.mine-panel .import-actions,.choice-bar{display:grid;gap:10px;margin-top:14px;align-items:stretch}
+.mine-panel .import-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+.choice-bar{grid-template-columns:minmax(12rem,18rem) auto auto;justify-content:start}
+.mine-panel .import-actions .btn,.mine-panel .import-actions select,.choice-bar select{width:100%;min-height:44px}
+.choice-bar .btn{min-height:44px}
+.badge,.source-short,.tiny-label,.library-meta,.day-bar{font-size:.9rem}
+.bar-value{font-size:.85rem}
+.eyebrow{font-size:.8rem;letter-spacing:.04em}
+@media(max-width:900px){
+  .mine-panel .import-actions,.choice-bar{grid-template-columns:1fr 1fr}
+  .mine-panel .import-actions .btn:first-child,.choice-bar .inline-choice{grid-column:1 / -1}
+  .choice-bar .btn{width:100%}
+  .play-bar,.lesson-go{display:grid;grid-template-columns:1fr 1fr}
+  .play-bar>label,.lesson-go>label,.lesson-go .btn{grid-column:1 / -1}
+  .play-bar .btn,.lesson-go .btn,.play-bar select,.lesson-go select{width:100%}
 }
 .lesson-go{margin-top:12px}
 .lesson-go select,.play-bar select,.inline-choice select{min-height:42px}
@@ -258,9 +268,14 @@ html[data-theme="dark"] #support-dialog .dialog-header p{color:#b7c9c0}
 html[data-theme="dark"] .support-codes figcaption{color:#d7e7de}
 @media(max-width:800px){
   .settings-grid,.support-codes{grid-template-columns:1fr}
-  .navigation a{font-size:.8rem}
-  .stats-grid .stat-label{font-size:.8rem}
-  .stats-grid .stat-value{font-size:1.25rem}
+  .navigation a{font-size:.85rem}
+  .stats-grid .stat-label{font-size:.9rem}
+  .stats-grid .stat-value{font-size:1.35rem}
+  .badge,.library-open .badge{font-size:.85rem}
+  .review-top p,.review-top .btn,.hero p{font-size:1rem;max-width:none}
   #today-date{display:none}
   .filter-row .search{flex-basis:100%}
+  .topbar{z-index:4}
+  .brand{max-width:calc(100vw - 230px)}
+  .brand>span:last-child{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
