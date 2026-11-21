@@ -1,0 +1,13 @@
+{
+  "name": "MyIELTS 我的剑雅学习本",
+  "short_name": "MyIELTS",
+  "description": "在剑雅原句中学习，用间隔复习记住。",
+  "lang": "zh-CN",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7f6",
+  "theme_color": "#153f35",
+  "icons": [{ "src": "./icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

@@ -1,0 +1,10 @@
+import { cp, mkdir, readdir, rm, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+await rm('dist', { recursive: true, force: true });
+await mkdir('dist', { recursive: true });
+for (const file of await readdir('web')) await cp(`web/${file}`, `dist/${file}`, { recursive: true });
+const hash = createHash('sha256');
+for (const file of ['index.html', 'style.css', 'app.js', 'core.js', 'data/cards.json', 'manifest.webmanifest', 'icon.svg']) hash.update(await readFile(`dist/${file}`));
+const sw = await readFile('dist/sw.js', 'utf8');
+await writeFile('dist/sw.js', sw.replace('myielts-v1-20261121', `myielts-${hash.digest('hex').slice(0, 16)}`));
+console.log('Built static site in dist/');
