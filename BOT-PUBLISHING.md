@@ -12,6 +12,8 @@ botId：`0eca5200-224b-4af8-b13a-6fd4f4762592`；只更新 `content/reading.json
 
 初始阅读213条，见 `web/data/cards.json` 中kind为reading的记录；沿用稳定id，补充到同一篇。例如 `versatile` 为 `c17-t1-p2-126`。阅读发布要求 `feedback/note/originalRef/translation` 非空。
 
+阅读已有74个不同原句的自然英音MP3，见 `content/reading-audio-manifest.json`。新增原句提交后，`reading-speech.yml`自动生成新增音频，网页通过朗读索引自动获取，无需重新部署。生成期间可使用系统朗读回退；这是合成朗读，不能标成听力真题原声。
+
 ## 听力：完整原声逐句课程，包含播音员
 
 botId：`e79fc4f8-184b-450b-b10e-a21f91070599`；负责 `content/listening.json`、必要的 `content/audio/` 原音和听力来源清单，不改阅读或网页代码。
