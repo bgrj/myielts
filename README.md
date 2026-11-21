@@ -2,7 +2,9 @@
 
 手机打开，在你的剑雅原句中学习、练习和复习。原生 HTML / CSS / JavaScript，零运行时第三方依赖，无账号、无广告。
 
-网站部署在用户已授权的 Vercel `bgrjs-projects / myielts` 项目；源码保存在本仓库。[Vercel 项目](https://vercel.com/bgrjs-projects/myielts)
+**打开学习网站：https://myielts-five.vercel.app/**
+
+网站部署在用户已授权的 Vercel `bgrjs-projects / myielts` 项目，生产状态 READY；源码保存在本仓库。[Vercel 项目](https://vercel.com/bgrjs-projects/myielts) · [验证记录](VERIFICATION.md)
 
 ## 已有内容
 
