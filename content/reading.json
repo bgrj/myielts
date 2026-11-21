@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "kind": "reading",
   "botId": "0eca5200-224b-4af8-b13a-6fd4f4762592",
-  "revision": 2,
-  "updatedAt": "2026-11-21T15:06:33.716188+00:00",
-  "publisher": "verified-feedback",
+  "revision": 3,
+  "updatedAt": "2026-11-21T16:52:51.451Z",
+  "publisher": "grok",
   "cards": [
     {
       "id": "c17-t1-p2-025",
@@ -28,6 +28,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
@@ -57,6 +61,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
@@ -86,6 +94,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "the storage of 后面填被储存的东西；a salt depot 是盐仓，因此此题只填 salt，不能填 depot。",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
@@ -115,6 +127,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
@@ -144,6 +160,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
@@ -173,6 +193,10 @@
       "speaker": "",
       "pronunciation": "",
       "grammar": "",
+      "audioSource": "",
+      "sectionGroup": "",
+      "sourceTurn": "",
+      "translationContext": "",
       "tags": [
         "词汇",
         "搭配"
