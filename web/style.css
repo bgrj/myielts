@@ -23,3 +23,4 @@
 dialog .audio-dock { position:sticky; bottom:0; width:100%; margin-top:16px; }
 .dialog-fallback[open] { position:fixed; inset:5vh auto auto 50%; transform:translateX(-50%); z-index:100; box-shadow:0 0 0 100vmax #0008; }
 @media(max-width:760px) { .audio-dock { bottom:calc(76px + env(safe-area-inset-bottom,0px)); right:16px; } body.audio-open main { padding-bottom:180px; } }
+[hidden] { display:none !important; }
