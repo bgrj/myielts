@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "kind": "reading",
   "botId": "0eca5200-224b-4af8-b13a-6fd4f4762592",
-  "revision": 1,
-  "updatedAt": "2026-11-21T14:02:00.320Z",
+  "revision": 2,
+  "updatedAt": "2026-11-21T15:06:33.716188+00:00",
   "publisher": "verified-feedback",
   "cards": [
     {
@@ -85,7 +85,7 @@
       "feedback": "第21题为什么填 salt？结合原文 a salt depot 讲清楚。",
       "speaker": "",
       "pronunciation": "",
-      "grammar": "",
+      "grammar": "the storage of 后面填被储存的东西；a salt depot 是盐仓，因此此题只填 salt，不能填 depot。",
       "tags": [
         "词汇",
         "搭配"

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "kind": "listening",
   "botId": "e79fc4f8-184b-450b-b10e-a21f91070599",
-  "revision": 1,
-  "updatedAt": "2026-11-21T14:33:33.339872+00:00",
+  "revision": 2,
+  "updatedAt": "2026-11-21T15:06:33.717192+00:00",
   "publisher": "verified-feedback",
   "cards": [
     {
@@ -27,7 +27,7 @@
       "feedback": "At/（Of?）the end of test......；Section 1 里听不清的小词和发音。",
       "speaker": "播音员 · ANNOUNCER",
       "pronunciation": "拼接位置:01:16.95 起(三遍分别在 01:16.95,01:18.97,01:20.99;单遍约 1.5 秒) 原文:At the end of the test 截取说明:你犹豫 At / Of 为什么容易听不清:实际是 At the end of the test。At /ət/、of /əv/、两个 the 都弱读,整串几乎是 /ət ði ˈend əv ðə test/,所以 At 和 of 容易对调或听丢。后面 you will be given... 已按你的省略号截掉。",
-      "grammar": "",
+      "grammar": "At the end of 是时间短语；of the test 修饰 end。句首是 At，不是 Of。按原音回听两个弱读小词。",
       "tags": [
         "发音",
         "精听"
