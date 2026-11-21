@@ -1,3 +1,4 @@
+import { cloneData } from './compat.js';
 export const VERSION = 1;
 export const DAY = 86400000;
 export const STEPS = [1, 3, 7, 14, 30, 60, 120];
@@ -5,7 +6,7 @@ export function dayKey(now = Date.now()) {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
 }
 export function emptyState() {
-  return { schemaVersion: VERSION, cards: [], librarySnapshot: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 0.85 }, updatedAt: 0 };
+  return { schemaVersion: VERSION, cards: [], librarySnapshot: [], progress: {}, favorites: [], events: [], settings: { dailyNew: 5, rate: 1 }, updatedAt: 0 };
 }
 export function schedule(previous, rating, now = Date.now()) {
   if (!['again', 'hard', 'good', 'easy'].includes(rating)) throw new Error('无效评分');
@@ -104,7 +105,7 @@ export function validateBackup(data) {
 }
 export function mergeBackup(current, incoming) {
   const other = validateBackup(incoming);
-  const out = structuredClone(current);
+  const out = cloneData(current);
   const newIsLatest = other.updatedAt >= current.updatedAt;
   const cardMap = new Map((newIsLatest ? [...current.cards, ...other.cards] : [...other.cards, ...current.cards]).map(c => [c.id, c]));
   out.cards = [...cardMap.values()];

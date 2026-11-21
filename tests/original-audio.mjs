@@ -34,6 +34,7 @@ try {
   const first = await page.evaluate(() => ({ duration:window.__players.at(-1).duration, src:window.__players.at(-1).src, synth:window.__synthCount }));
   assert.ok(first.duration > 1 && first.duration < 4); assert.equal(first.synth,0); assert.ok(first.src.includes('c10-t1-s1-sentence-002-'));
   await page.getByRole('button',{name:'停止',exact:true}).click();
+  await page.evaluate(() => {window.__players.at(-1).__times=[];});
   await page.getByRole('button',{name:'原音三遍',exact:true}).click();
   await page.waitForFunction(() => document.querySelector('[data-original-status]')?.textContent.includes('共 3 遍'), undefined, { polling:100, timeout:45000 });
   const triple = await page.evaluate(() => ({times:window.__players.at(-1).__times,duration:window.__players.at(-1).duration,synth:window.__synthCount}));

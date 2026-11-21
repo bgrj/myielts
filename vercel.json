@@ -7,7 +7,8 @@
   "rewrites": [
     { "source": "/recordings/:path*", "destination": "https://raw.githubusercontent.com/bgrj/myielts/main/content/audio/:path*" },
     { "source": "/feeds/reading.json", "destination": "https://raw.githubusercontent.com/bgrj/myielts/main/content/reading.json" },
-    { "source": "/feeds/listening.json", "destination": "https://raw.githubusercontent.com/bgrj/myielts/main/content/listening.json" }
+    { "source": "/feeds/listening.json", "destination": "https://raw.githubusercontent.com/bgrj/myielts/main/content/listening.json" },
+    { "source": "/feeds/reading-audio.json", "destination": "https://raw.githubusercontent.com/bgrj/myielts/main/content/reading-audio-manifest.json" }
   ],
   "headers": [
     { "source": "/recordings/:path*", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] },

@@ -1,7 +1,7 @@
 const PREFIX = 'myielts-' + new URL(self.registration.scope).pathname.replaceAll('/', '_') + '-';
 const CACHE = PREFIX + 'myielts-v1-20261121';
 const AUDIO_CACHE = PREFIX + 'original-audio-v1';
-const SHELL = ['./', './index.html', './style.css', './app.js', './core.js', './publishing.js', './feed-client.js', './listening.js', './data/cards.json', './data/listening.json', './manifest.webmanifest', './icon.svg'];
+const SHELL = ['./', './index.html', './style.css', './app.js', './core.js', './compat.js', './publishing.js', './feed-client.js', './listening.js', './data/cards.json', './data/listening.json', './data/reading-audio.json', './manifest.webmanifest', './icon.svg'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));
 });

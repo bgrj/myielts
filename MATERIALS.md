@@ -29,8 +29,8 @@ git lfs pull --include="<MATERIALS.json 中的准确路径>"
 
 优先读取清单，按用户正在练习的书册/Test/Passage/Section 获取需要的 PDF 或原音。无需每次下载全部 4.08 GiB。原音来自这些真实录音；合成语音不能用于替代听力练习。
 
-反馈后的短片段放在 `content/audio/`，正常 Git 保存小文件，再将真实片段 URL、起止秒数写进对应听力知识卡。手机网页只按需加载当前片段，不在打开网页时下载整套原始资料。
+当前听力按完整场景的原声顺序逐句听写，包含ANNOUNCER。短片段放在 `content/audio/`，正常Git保存，网页按需加载当前句，不在打开网页时下载整套资料。反馈用于补充对应句子的解释，不能删成反馈片段集。
 
-新剪出的片段应使用带内容哈希的文件名，保留原音、精确边界及来源。其元数据和校验值见 `content/audio-manifest.json`。未核实原音的反馈先保留待发布，不能用合成音通过原音校验。
+新剪出的片段应使用带内容哈希的文件名，保留原音、精确边界与来源。当前157句及完整录音的索引见 `content/listening-audio-manifest.json`、`content/listening-source-transcripts.json`；旧 `content/audio-manifest.json` 的38个难片段仅作归档。未核实原音的课程先保留草稿，不用合成音代替。
 
 仓库程序代码的 LICENSE 不改变这些第三方试题、音频和解析资料原有的权利归属。

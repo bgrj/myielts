@@ -78,6 +78,7 @@ export function botInstructions(kind) {
   return `请为我启用“反馈后更新 MyIELTS”并保存为长期工作规则。你负责${kind === 'reading' ? '阅读' : '听力'}，botId 是 ${bot.botId}。
 学习网址：${LEARNING_URL}
 源码与内容仓库：https://github.com/bgrj/myielts ，分支 main。
+阅读自然朗读已使用预生成的 en-GB-SoniaNeural 英音 MP3，音色尽量自然流畅，和听力真题原声严格区分。你只需更新阅读 JSON；新增原句后仓库的 reading-speech 工作流会自动补齐自然朗读并更新 content/reading-audio-manifest.json，网页自动获取。生成中或失败时仍保留原句和学习进度，不能把合成音说成真题原声；请报告朗读待补齐，勿声称已经生成。
 先读取仓库 BOT-PUBLISHING.md、content/schema.json 与 MATERIALS.md / MATERIALS.json。真题、解析和原声音频已按原目录存放，Git LFS 文件要读取实际内容，不能把指针当原文或音频。按本次练习的书册/Test/Passage/Section 获取需要的材料即可。GitHub 已连接且有本仓库写权限；若登录失效，请展示连接卡让我完成授权，不要向我要明文 token。
 以后我像往常一样反馈生词、搭配、语法疑问、没听清的片段、听错的词，或说“再加几个”，你整理完成后直接发布到 ${bot.path}，不用让我复制 JSON 或手动导入网页。只有从我反馈中提取的知识点可以进入学习源；未经我反馈的陌生内容不要扩充。
 每条保存我的原始难点反馈 feedback、真实剑雅原句/录音片段、精确出处、整句译文及针对性解释；原句与材料核对后才标 sourceVerified:true。不要把改写句或猜测的原文当真题原句。${kind === 'listening' ? '每条听力练习必须使用对应的剑雅原声音频，绝不能用 TTS 或合成语音替代。保留播音员/说话人、连读/弱读/缩写/音标和误听；必须附原音 URL、audioSource 与 start/end 秒数，严格按我指定的片段，不补整段。先查 content/audio-manifest.json 复用已有38句原音；新片段从真实录音裁剪，带哈希文件名上传 content/audio/ 后再发布JSON，更新音频来源清单。缺原音的反馈先保留待补齐，不发布为可练习内容。三遍跟练由网页按每遍间隔3秒播放，不用把重复音嵌进单句文件。' : '追加词汇补入同一篇；同一知识点沿用稳定 id，补充 just、acoustics、salt depot 等疑问时保留原有解释并纠正无依据推断。'}

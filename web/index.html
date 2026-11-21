@@ -35,6 +35,12 @@
   </div>
   <dialog id="card-dialog" aria-labelledby="dialog-heading"></dialog>
   <dialog id="edit-dialog" aria-labelledby="edit-heading"></dialog>
+  <aside id="audio-dock" class="audio-dock" hidden aria-label="音频播放器">
+    <div class="audio-dock-heading"><strong id="audio-title">音频播放</strong><button type="button" class="text-button dark" data-action="close-audio" aria-label="关闭播放器">关闭</button></div>
+    <audio id="shared-audio" controls preload="none" playsinline webkit-playsinline aria-label="学习音频播放器"></audio>
+    <p id="audio-status" class="help-text" role="status"></p>
+    <div class="audio-dock-links"><button id="audio-resume" class="text-button dark" data-action="resume-audio" hidden>继续播放</button><a id="audio-direct" class="inline-link" target="_blank" rel="noopener">单独打开音频</a></div>
+  </aside>
   <div id="toast" role="status" aria-live="polite"></div>
   <noscript>请启用 JavaScript 以打开学习卡片和复习安排。</noscript>
 </body>

@@ -9,7 +9,7 @@ const feed=validateFeed(JSON.parse(await readFile('content/listening.json','utf8
 const manifest=JSON.parse(await readFile('content/listening-audio-manifest.json','utf8'));
 
 test('both complete originals preserve announcer, example, conversation and closing in source order',async()=>{
-  assert.deepEqual(feed.lessons.map(l=>[l.id,l.sentenceCount,l.announcerCount]),[['self-drive',116,23],['leisure-club',41,8]]);
+  assert.deepEqual(feed.lessons.slice(0,2).map(l=>[l.id,l.sentenceCount,l.announcerCount]),[['self-drive',116,23],['leisure-club',41,8]]);
   const source=JSON.parse(await readFile('content/listening-source-transcripts.json','utf8'));
   for(const l of source.lessons){
     const group=feed.cards.filter(c=>c.lessonId===l.id);
@@ -17,7 +17,7 @@ test('both complete originals preserve announcer, example, conversation and clos
     assert.equal(group[0].speaker,'ANNOUNCER');assert.equal(group.at(-1).speaker,'ANNOUNCER');
     assert.ok(group.at(-1).sentence.includes('check your answers'));
   }
-  assert.equal(manifest.clips.length,157);
+  assert.equal(manifest.clips.length,feed.cards.length);
   for(const clip of manifest.clips){
     const bytes=await readFile(clip.path);
     assert.equal(createHash('sha256').update(bytes).digest('hex'),clip.sha256);
@@ -42,5 +42,5 @@ test('partial feedback sets and third scenarios without an explicit request cann
   assert.throws(()=>validateFeed(draft,'listening'),/明确要求/);
   assert.ok(botInstructions('listening').includes('ANNOUNCER'));
   const legacy={...feed.cards[0],id:'old-feedback'};delete legacy.lessonId;delete legacy.order;
-  assert.equal(publishedCards([legacy,...feed.cards],{}).length,157);
+  assert.equal(publishedCards([legacy,...feed.cards],{}).length,feed.cards.length);
 });

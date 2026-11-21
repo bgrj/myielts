@@ -2,6 +2,8 @@ import { DAY, dayKey, emptyState, schedule, queueFor, checkAnswer, validateCards
 import { PUBLISHERS, LEARNING_URL, publishedCards, botInstructions, validateFeed } from './publishing.js';
 import { FeedClient } from './feed-client.js';
 import { lessonCards, lessonQueue } from './listening.js';
+import { cloneData, uniqueId, installDialogFallback, timeoutRequest } from './compat.js';
+installDialogFallback();
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -32,6 +34,8 @@ let filters = { kind: 'all', source: '', search: '', favorite: false, limit: 30 
 let canStore = true, rawRecovery = null, audioURL = null, toastTimer, swRegistration, applyUpdate = false;
 let publishedFeeds = {}, pendingFeeds = null, feedClient, feedFailures = {};
 let originalPlayer = null, originalRepeatTimer = null;
+let readingSpeech = new Map(), resumeAudio = null;
+let pointerBusy = false;
 function toast(message) { $('#toast').textContent = message; $('#toast').classList.add('visible'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('visible'), 4200); }
 function storageWarning(message) { const el = $('#storage-warning'); el.hidden = false; el.textContent = message; }
 function persist() {
@@ -42,7 +46,7 @@ function persist() {
 }
 function cards() { return publishedCards([...baseCards, ...state.librarySnapshot], publishedFeeds, state.cards); }
 function canApplyFeed() {
-  return !session && !document.querySelector('dialog[open]') && !document.activeElement?.matches('input,textarea,select') && !(route === 'settings' && $('#import-json')?.value.trim());
+  return !pointerBusy && !session && !document.querySelector('dialog[open]') && !document.activeElement?.matches('input,textarea,select') && !(route === 'settings' && $('#import-json')?.value.trim());
 }
 function applyPendingFeed() {
   if (!pendingFeeds || !canApplyFeed()) return;
@@ -63,6 +67,7 @@ async function refreshPublished(manual = false) {
   if (!feedClient || (!navigator.onLine && !manual)) return;
   const button = $('[data-action="sync-content"]'); if (button) button.disabled = true;
   const result = await feedClient.refresh();
+  refreshReadingSpeech(true);
   const currentButton = $('[data-action="sync-content"]'); if (currentButton) currentButton.disabled = false;
   if (manual) toast(Object.keys(result.failures).length ? '部分内容源暂不可用，已有知识和进度仍保留。' : pendingFeeds ? '已收到更新，结束本轮学习或编辑后显示。' : '已检查最新学习内容。');
 }
@@ -172,12 +177,28 @@ function remoteAudio(c) {
 function originalControls(c) {
   return `<div class="review-controls"><button class="btn btn-secondary" data-action="original-play" data-id="${esc(c.id)}" ${c.audio ? '' : 'disabled'}>${icon('headphones')} 播放原音</button><button class="btn btn-secondary" data-action="original-triple" data-id="${esc(c.id)}" ${c.audio ? '' : 'disabled'}>原音三遍</button><button class="btn btn-quiet" data-action="original-slow" data-id="${esc(c.id)}" ${c.audio ? '' : 'disabled'}>原音慢速</button><button class="btn btn-quiet" data-action="stop-audio">停止</button></div><p class="audio-notice" data-original-status role="status">${c.audio ? '对应剑雅原录音 · 三遍模式每遍间隔 3 秒' : '原音待补齐，暂不进入听写练习。'}</p>`;
 }
+function readingControls(c) {
+  return `<div class="review-controls"><button class="btn btn-secondary" data-action="speak" data-id="${esc(c.id)}">${icon('speaker')} ${readingSpeech.has(c.sentence) ? '自然英音朗读' : '朗读原句'}</button><button class="btn btn-secondary" data-action="speak-slow" data-id="${esc(c.id)}">慢速朗读</button><button class="btn btn-quiet" data-action="stop-audio">停止</button></div>`;
+}
 function playOriginal(id, repeats = 1, rate = 1) {
   const c = cardById(id); if (!c?.audio) { toast('这条反馈还缺对应原音，请补齐后再练习。'); return; }
+  playSegment(c, c.audio, repeats, rate, '剑雅原声');
+}
+function playSegment(c, clip, repeats = 1, rate = 1, label = '自然朗读 · AI合成') {
   stopMedia();
-  const player = new Audio(c.audio.url); originalPlayer = player; player.playbackRate = rate;
+  const player = $('#shared-audio'); originalPlayer = player;
+  player.src = clip.url; player.preload = 'metadata'; player.playbackRate = rate;
+  if ('preservesPitch' in player) player.preservesPitch = true;
+  $('#audio-dock').hidden = false; $('#audio-title').textContent = label;
+  (document.querySelector('dialog[open]') || document.body).appendChild($('#audio-dock'));
+  $('#audio-direct').href = clip.url; document.body.classList.add('audio-open');
   let played = 1, finishedThisPass = false;
-  const status = message => document.querySelectorAll('[data-original-status]').forEach(el => el.textContent = message);
+  const status = message => { document.querySelectorAll('[data-original-status]').forEach(el => el.textContent = message); $('#audio-status').textContent = message; };
+  const attemptPlay = () => {
+    const blocked = () => { status('浏览器暂停了播放，请点下方播放器或“继续播放”。'); $('#audio-resume').hidden = false; resumeAudio = attemptPlay; };
+    try { const result = player.play(); if(result?.then) result.then(() => { $('#audio-resume').hidden = true; status(`${label} · 第 ${played}/${repeats} 遍`); }).catch(blocked); }
+    catch { blocked(); }
+  };
   const finished = () => {
     if (finishedThisPass || originalPlayer !== player) return;
     finishedThisPass = true; player.pause();
@@ -185,18 +206,18 @@ function playOriginal(id, repeats = 1, rate = 1) {
       status(`原音第 ${played}/${repeats} 遍结束，停顿 3 秒…`);
       originalRepeatTimer = setTimeout(() => {
         if (originalPlayer !== player) return;
-        played++; finishedThisPass = false; player.currentTime = c.audio.start;
+        played++; finishedThisPass = false; player.currentTime = clip.start;
         status(`正在播放原音 · 第 ${played}/${repeats} 遍`);
-        player.play().catch(() => status('点击播放原音继续。'));
+        attemptPlay();
       }, 3000);
-    } else status(`原音播放完成${repeats > 1 ? ' · 共 3 遍' : ''}`);
+    } else status(`${label}播放完成${repeats > 1 ? ' · 共 3 遍' : ''}`);
   };
-  player.onloadedmetadata = () => { player.currentTime = c.audio.start; };
-  player.ontimeupdate = () => { if (player.currentTime >= c.audio.end) finished(); };
+  player.onloadedmetadata = () => { try { player.currentTime = clip.start; } catch {} };
+  player.ontimeupdate = () => { if (player.currentTime >= clip.end) finished(); };
   player.onended = finished;
-  player.onerror = () => { stopMedia(); toast('对应原音暂未加载成功，请联网后重试。'); };
-  status(`正在播放原音 · 第 1/${repeats} 遍`);
-  player.play().catch(() => { status('原音未能开始播放，请再点一次。'); });
+  player.onplay = () => { $('#audio-resume').hidden = true; if (finishedThisPass) { clearTimeout(originalRepeatTimer); played = played < repeats ? played+1 : 1; finishedThisPass = false; player.currentTime = clip.start; } };
+  player.onerror = () => { status('音频加载失败，可点“单独打开音频”重试。'); $('#audio-resume').hidden = false; resumeAudio = () => { player.load(); attemptPlay(); }; };
+  status('正在加载音频…'); attemptPlay();
 }
 function publishedOverride(c) {
   const remote = Object.values(publishedFeeds).flatMap(feed => feed.cards).find(card => card.id === c.id);
@@ -215,7 +236,7 @@ function openCard(id) {
   stopMedia();
   const dialog = $('#card-dialog');
   dialog.dataset.cardId = id;
-  dialog.innerHTML = `<div class="dialog-header"><div><h2 id="dialog-heading">回到原句里</h2><div style="margin-top:8px">${badge(c)}</div></div><button class="icon-button" data-action="close-dialog" aria-label="关闭知识卡">${icon('close')}</button></div>${details(c)}<div class="dialog-footer">${c.kind === 'listening' ? originalControls(c) : `<button class="btn btn-secondary" data-action="speak" data-id="${esc(id)}">${icon('speaker')} 合成朗读原句</button>`}${favoriteButton(c)}<button class="btn btn-secondary" data-action="edit-card" data-id="${esc(id)}">${icon('edit')} 编辑</button></div><p class="help-text">${c.kind === 'listening' ? '听力使用对应的剑雅原录音，可选原速、慢速及三遍跟练。' : '阅读合成朗读用于辅助跟读。'}</p>`;
+  dialog.innerHTML = `<div class="dialog-header"><div><h2 id="dialog-heading">回到原句里</h2><div style="margin-top:8px">${badge(c)}</div></div><button class="icon-button" data-action="close-dialog" aria-label="关闭知识卡">${icon('close')}</button></div>${details(c)}<div class="dialog-footer">${c.kind === 'listening' ? originalControls(c) : readingControls(c)}${favoriteButton(c)}<button class="btn btn-secondary" data-action="edit-card" data-id="${esc(id)}">${icon('edit')} 编辑</button></div><p class="help-text">${c.kind === 'listening' ? '听力使用对应的剑雅原录音，可选原速、慢速及三遍跟练。' : '阅读使用自然英音合成朗读，辅助理解和跟读。'}</p>`;
   if (!dialog.open) dialog.showModal();
 }
 function startSession({ practice = false, mode = 'auto', kind = 'all' } = {}) {
@@ -240,7 +261,7 @@ function renderSession() {
     ${!revealing && mode === 'recall' ? `<p class="prompt">想想这个表达，在原句里是怎么说的？</p><p class="english">${esc(c.meaning || c.translation || '回想原句中的表达')}</p>` : ''}
     ${!revealing ? `<label for="study-answer" class="sr-only">${mode === 'dictation' ? '写下你听到的句子' : '输入回忆出的表达'}</label><textarea id="study-answer" class="answer-input" placeholder="${mode === 'dictation' ? '写下你听到的，也可以先在心里回忆…' : '试着写下答案，也可以先在心里回忆…'}" autocomplete="off" autocapitalize="off" spellcheck="false">${esc(session.typed)}</textarea><button class="btn reveal" data-action="reveal">回忆好了，核对答案</button><p class="review-explainer">先想一想，比直接看答案更有帮助。</p>` : `
     ${session.typed.trim() ? `<div class="review-feedback ${checkAnswer(session.typed, mode === 'dictation' ? c.sentence : c.focus) ? '' : 'partial'}">${checkAnswer(session.typed, mode === 'dictation' ? c.sentence : c.focus) ? '文字核对一致，看看是否也理解了原句。' : `对照看看：${esc(mode === 'dictation' ? c.sentence : c.focus)}。意思相近的答案，请结合原句自行判断。`}<br><span class="tiny-label">你的答案：${esc(session.typed)}</span></div>` : ''}${details(c)}
-    ${c.kind === 'listening' ? originalControls(c) : `<div class="review-controls"><button class="btn btn-secondary" data-action="speak" data-id="${esc(c.id)}">${icon('speaker')} 合成朗读</button></div>`}<div class="review-controls"><button class="btn btn-secondary" data-action="open-card" data-id="${esc(c.id)}">${icon('edit')} 查看 / 补充</button></div>
+    ${c.kind === 'listening' ? originalControls(c) : readingControls(c)}<div class="review-controls"><button class="btn btn-secondary" data-action="open-card" data-id="${esc(c.id)}">${icon('edit')} 查看 / 补充</button></div>
     ${session.practice ? '<button class="btn reveal" data-action="next-practice">继续练习</button><p class="review-explainer">自由练习不会改变复习安排。</p>' : `<p class="prompt">刚才回忆起来，有多容易？</p><div class="rating-grid">${[['again', '忘了'], ['hard', '吃力'], ['good', '记住'], ['easy', '轻松']].map(([rating, label]) => `<button class="rating" data-action="rate" data-rating="${rating}"><strong>${label}</strong><span>${intervalText(schedule(state.progress[c.id], rating).due - Date.now())}后</span></button>`).join('')}</div><p class="review-explainer">如实反馈，下次复习会按你的状态安排。</p>`}`}</article>`;
 }
 function renderDone() {
@@ -251,7 +272,7 @@ function rate(rating) {
   if (!session?.revealed || session.practice) return;
   stopMedia();
   const id = session.ids[session.index], now = Date.now();
-  lastRating = { id, previous: state.progress[id] ? structuredClone(state.progress[id]) : null, index: session.index, eventId: crypto.randomUUID() };
+  lastRating = { id, previous: state.progress[id] ? cloneData(state.progress[id]) : null, index: session.index, eventId: uniqueId() };
   const isNew = !state.progress[id];
   state.progress[id] = schedule(state.progress[id], rating, now);
   state.events.push({ id: lastRating.eventId, cardId: id, at: now, day: dayKey(now), rating, isNew });
@@ -267,7 +288,7 @@ const template = { schemaVersion: 1, cards: [{ id: 'c17-t1-p1-congested', kind: 
 const grokPrompt = `请只整理我在本次对话反馈过的不熟悉内容，不要额外推荐新词。每条必须配真实剑雅原句或原录音片段及书册、Test、Passage/Section 出处。不要把改写句冒充原句；无法核实的句子先不要输出。请按以下 JSON 格式输出，可直接复制保存为 .json 导入 MyIELTS。kind 用 reading 或 listening；id 要稳定且唯一，focus 必须原样出现在 sentence 中。提供中文释义、整句翻译、根据我的难点补发音/音标、语法、搭配与易错解释；没有依据的词源不要编写。仅输出 JSON，不含 Markdown 代码围栏。\n\n${JSON.stringify(template, null, 2)}`;
 function renderSettings() {
   $('#main').innerHTML = `${intro('MAKE IT YOUR OWN', '让学习本，跟着你成长。', '记录新的难点，也给已经积累的内容留一份备份。')}
-    <div class="settings-grid">${syncPanel()}<section class="panel"><h2>按自己的节奏来</h2><p>先复习旧知识，再少量加入新内容。</p><div class="settings-row"><label for="daily-new">每日新学上限</label><input id="daily-new" type="number" min="0" max="30" step="1" value="${state.settings.dailyNew}"></div><div class="settings-row"><label for="speech-rate">合成语音速度</label><select id="speech-rate">${[[0.65,'慢速'],[0.85,'舒缓'],[1,'正常'],[1.15,'稍快']].map(([n,l]) => `<option value="${n}" ${Math.abs(state.settings.rate-n)<.01?'selected':''}>${l}</option>`).join('')}</select></div><p class="help-text">每日统计按北京时间计算。已到期的复习不受新学上限影响。</p></section>
+    <div class="settings-grid">${syncPanel()}<section class="panel"><h2>按自己的节奏来</h2><p>先复习旧知识，再少量加入新内容。</p><div class="settings-row"><label for="daily-new">每日新学上限</label><input id="daily-new" type="number" min="0" max="30" step="1" value="${state.settings.dailyNew}"></div><div class="settings-row"><label for="speech-rate">朗读速度</label><select id="speech-rate">${[[0.65,'慢速'],[0.85,'舒缓'],[1,'自然'],[1.15,'稍快']].map(([n,l]) => `<option value="${n}" ${Math.abs(state.settings.rate-n)<.01?'selected':''}>${l}</option>`).join('')}</select></div><p class="help-text">每日统计按北京时间计算。已到期的复习不受新学上限影响。</p></section>
     <section class="panel"><h2>备份你的积累</h2><p>知识卡、收藏和复习进度保存在当前浏览器，不会自动同步到其他设备。</p><div class="settings-actions"><button class="btn btn-secondary" data-action="export">${icon('download')} 导出完整备份</button><label class="btn btn-secondary import-label">合并恢复<input class="file-input" data-file="backup" type="file" accept=".json,application/json"></label></div><p class="help-text">换手机前先导出，再到新设备恢复。恢复会保留较新的复习进度和双方收藏。建议定期备份。</p>${rawRecovery ? '<button class="text-button" data-action="export-raw">下载原始异常数据以便恢复</button>' : ''}</section>
     <section class="panel wide"><h2>手动导入（备用）</h2><p>已有的 JSON 文件也可以手动导入。日常反馈使用上方的 bot 自动发布流程。</p><div class="settings-actions"><a class="btn btn-secondary" href="https://x.ai/bot/rCEjuGhF-TVFft_2pDkqB" target="_blank" rel="noopener">${icon('book')} 打开阅读 Grok</a><a class="btn btn-secondary" href="https://x.ai/bot/_m-HdAjjmGuyPPJH1ASnm" target="_blank" rel="noopener">${icon('headphones')} 打开听力 Grok</a><button class="btn btn-secondary" data-action="copy-prompt">复制整理指令</button><button class="btn btn-secondary" data-action="download-template">下载 JSON 示例</button></div><p class="help-text">这两个链接用于打开 bot，本站无法读取私人聊天。只导入你明确整理的学习记录。</p><details style="margin-top:15px"><summary class="text-button">查看整理指令与格式</summary><pre class="template">${esc(grokPrompt)}</pre></details><label class="form-field" style="margin-top:16px" for="import-json">粘贴 Grok 输出的 JSON<textarea id="import-json" rows="5" placeholder='{"schemaVersion":1,"cards":[...]}'></textarea></label><div class="settings-actions"><button class="btn" data-action="import-paste">导入知识卡</button><label class="btn btn-secondary import-label">选择 JSON 文件<input class="file-input" data-file="cards" type="file" accept=".json,application/json"></label><button class="btn btn-secondary" data-action="new-card">${icon('plus')} 手动记一条</button></div><p id="import-error" class="error-text" role="alert"></p><p class="help-text">导入前会检查所有条目，有错误时整批不写入。同一 id 更新内容，但保留已有复习进度。</p></section>
     <section class="panel"><h2>为什么这样安排复习？</h2><p>先回忆、再核对。用 1、3、7、14、30、60、120 天作初始阶梯，按照“忘了 / 吃力 / 记住 / 轻松”调整。</p><p style="margin-top:10px">忘记后 10 分钟重学；吃力时缩短间隔；记住后逐步拉开；轻松时跳过一阶。固定天数只是起点，不代表个人记忆的精确预测。</p><a class="inline-link help-text" href="https://www.psychologicalscience.org/publications/journals/pspi/learning-techniques.html" target="_blank" rel="noopener">主动提取与分散练习的研究依据</a></section>
@@ -294,17 +315,44 @@ function download(data, filename, isRaw = false) {
 }
 function speak(id, slow = false) {
   const originalCard = cardById(id); if (originalCard?.kind === 'listening') { playOriginal(id, 1, slow ? .8 : 1); return; }
+  const natural = readingSpeech.get(originalCard?.sentence);
+  if (natural) { playSegment(originalCard, {url:natural.url,start:0,end:natural.duration}, 1, slow ? .8 : state.settings.rate); return; }
   if (!('speechSynthesis' in window)) { toast('此浏览器不支持合成朗读，请使用本地原录音。'); return; }
   const c = cardById(id); if (!c) return;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(c.sentence);
   utterance.lang = 'en-GB'; utterance.rate = slow ? 0.65 : state.settings.rate;
-  const voice = speechSynthesis.getVoices().find(v => v.lang === 'en-GB') || speechSynthesis.getVoices().find(v => v.lang.startsWith('en'));
+  const voices = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+  const score = v => (/natural|neural|premium|enhanced/i.test(v.name) ? 100 : 0) + (/Google|Siri|Samantha|Daniel|Serena/i.test(v.name) ? 30 : 0) + (/en[-_]GB/i.test(v.lang) ? 20 : 0);
+  const voice = voices.sort((a,b) => score(b)-score(a))[0];
   if (voice) utterance.voice = voice;
   utterance.onerror = () => toast('语音暂不可用，试试联网或播放本地原录音。');
   speechSynthesis.speak(utterance);
 }
-function stopMedia() { clearTimeout(originalRepeatTimer); originalRepeatTimer = null; if (originalPlayer) { originalPlayer.pause(); originalPlayer = null; } window.speechSynthesis?.cancel(); document.querySelectorAll('audio').forEach(a => a.pause()); }
+function stopMedia() { clearTimeout(originalRepeatTimer); originalRepeatTimer = null; resumeAudio = null; if (originalPlayer) { originalPlayer.pause(); originalPlayer = null; } window.speechSynthesis?.cancel(); document.querySelectorAll('audio').forEach(a => a.pause()); if ($('#audio-dock')) { $('#audio-dock').hidden = true; document.body.appendChild($('#audio-dock')); } document.body.classList.remove('audio-open'); }
+
+async function refreshReadingSpeech(live = false) {
+  const apply = data => {
+    if (data?.kind !== 'synthetic-reading' || !Array.isArray(data.clips) || data.clips.length > 5000) throw new Error('阅读朗读索引无效');
+    const incoming = new Map();
+    for (const c of data.clips) {
+      const url = new URL(c.url, location.href);
+      const localPreview = url.protocol === 'http:' && url.origin === location.origin;
+      if (typeof c.sentence !== 'string' || c.sentence.length > 12000 || !Number.isFinite(c.duration) || c.duration <= 0 || c.duration > 300 || (url.protocol !== 'https:' && !localPreview) || url.username || url.password) throw new Error('阅读朗读片段无效');
+      incoming.set(c.sentence, {...c,url:url.href});
+    }
+    for (const [sentence,clip] of incoming) readingSpeech.set(sentence,clip);
+  };
+  const timeout=timeoutRequest();
+  try {
+    if (!live) { try { const cached=localStorage.getItem('myielts.readingAudio.v1'); if(cached)apply(JSON.parse(cached)); } catch {} }
+    const response=await fetch(live ? `./feeds/reading-audio.json?v=${Date.now()}` : './data/reading-audio.json',{cache:live?'no-store':'default',signal:timeout.signal});
+    if(!response.ok)throw new Error();
+    const data=await response.json();apply(data);
+    try {localStorage.setItem('myielts.readingAudio.v1',JSON.stringify(data));} catch {}
+  } catch { /* Native browser speech remains available for uncached new sentences. */ }
+  finally {timeout.clear();}
+}
 document.addEventListener('click', async event => {
   const button = event.target.closest('[data-action]'); if (!button || button.disabled) return;
   const { action, id } = button.dataset;
@@ -339,7 +387,9 @@ document.addEventListener('click', async event => {
   if (action === 'original-play') playOriginal(id);
   if (action === 'original-triple') playOriginal(id, 3);
   if (action === 'original-slow') playOriginal(id, 1, .8);
-  if (action === 'stop-audio') { stopMedia(); toast('原音已停止'); }
+  if (action === 'stop-audio') { stopMedia(); toast('音频已停止'); }
+  if (action === 'resume-audio' && resumeAudio) resumeAudio();
+  if (action === 'close-audio') stopMedia();
   if (action === 'export') download({ ...state, cards: cards(), localCardIds: state.cards.map(c => c.id) }, `myielts-backup-${dayKey()}.json`);
   if (action === 'export-raw') download(rawRecovery, 'myielts-recovery.json', true);
   if (action === 'download-template') download(template, 'myielts-grok-template.json');
@@ -385,7 +435,7 @@ document.addEventListener('submit', event => {
   event.preventDefault();
   try {
     const form = event.target, old = cardById(form.dataset.id);
-    const c = { ...old, ...Object.fromEntries(new FormData(form)), id: old?.id || 'custom-' + crypto.randomUUID(), origin: old?.origin || '手动录入', tags: old?.tags || [] };
+    const c = { ...old, ...Object.fromEntries(new FormData(form)), id: old?.id || 'custom-' + uniqueId(), origin: old?.origin || '手动录入', tags: old?.tags || [] };
     c.fragment = c.fragment === 'true';
     const validated = validateCards([c])[0];
     state.cards = [...state.cards.filter(x => x.id !== c.id), validated]; persist(); $('#edit-dialog').close(); render(); toast('已保存知识卡');
@@ -401,7 +451,10 @@ document.addEventListener('play', event => {
 document.addEventListener('timeupdate', event => {
   const audio = event.target; if (audio.matches?.('audio[data-segment-end]') && audio.currentTime >= Number(audio.dataset.segmentEnd)) audio.pause();
 }, true);
-document.addEventListener('focusout', () => setTimeout(applyPendingFeed, 0));
+document.addEventListener('focusout', () => setTimeout(applyPendingFeed, 200));
+document.addEventListener('pointerdown', () => { pointerBusy = true; }, true);
+document.addEventListener('pointerup', () => setTimeout(() => { pointerBusy = false; applyPendingFeed(); }, 0), true);
+document.addEventListener('pointercancel', () => { pointerBusy = false; applyPendingFeed(); }, true);
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshPublished(); });
 window.addEventListener('online', () => refreshPublished());
 $('#quick-add').addEventListener('click', () => editCard());
@@ -436,6 +489,7 @@ async function init() {
   try {
     const response = await fetch('./data/cards.json'); if (!response.ok) throw new Error();
     baseCards = validateCards(await response.json());
+    await refreshReadingSpeech();
     const listeningResponse = await fetch('./data/listening.json');
     if (!listeningResponse.ok) throw new Error();
     const initialListening = validateFeed(await listeningResponse.json(), 'listening');
@@ -460,3 +514,4 @@ async function init() {
   }
 }
 init();
+

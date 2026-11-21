@@ -1,4 +1,5 @@
 import { PUBLISHERS, acceptFeed, validateFeed } from './publishing.js';
+import { timeoutRequest } from './compat.js';
 
 export class FeedClient {
   constructor({ baseUrl, storage, fetcher = (...args) => globalThis.fetch(...args), onUpdate = () => {} }) {
@@ -21,10 +22,11 @@ export class FeedClient {
     const next = { ...this.feeds }; let changed = false;
     const failures = {};
     await Promise.all(Object.keys(PUBLISHERS).map(async kind => {
+      const timeout = timeoutRequest();
       try {
         const url = new URL(`feeds/${kind}.json`, this.baseUrl);
         url.searchParams.set('v', String(Date.now()));
-        const response = await this.fetcher(url, { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(8000) });
+        const response = await this.fetcher(url, { cache: 'no-store', credentials: 'omit', signal: timeout.signal });
         if (!response.ok) throw new Error(`内容源 HTTP ${response.status}`);
         const raw = await response.text();
         if (raw.length > 2 * 1024 * 1024) throw new Error('单个内容源超过 2 MB');
@@ -32,6 +34,7 @@ export class FeedClient {
         changed ||= JSON.stringify(feed) !== JSON.stringify(this.feeds[kind]);
         next[kind] = feed; this.status[kind] = 'online';
       } catch (error) { failures[kind] = error.message; this.status[kind] = this.feeds[kind] ? 'cached-error' : 'unavailable'; }
+      finally { timeout.clear(); }
     }));
     this.feeds = next;
     try { this.storage?.setItem(this.key, JSON.stringify(next)); } catch { /* Keep current session usable. */ }

@@ -12,7 +12,8 @@
     "test:sync-browser": "node tests/live-content.mjs",
     "test:audio-browser": "node tests/original-audio.mjs",
     "content:check": "node scripts/check-content.mjs",
-    "test:listening-browser": "node tests/listening-courses.mjs"
+    "test:listening-browser": "node tests/listening-courses.mjs",
+    "test:audio-compatibility": "node tests/audio-compatibility.mjs"
   },
   "engines": {
     "node": ">=22"
