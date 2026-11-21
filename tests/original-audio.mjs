@@ -5,8 +5,8 @@ const base = process.env.TEST_URL || 'http://127.0.0.1:4173/ielts/';
 const browser = await chromium.launch(process.env.CI ? {} : { executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
 const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
 if (!process.env.TEST_URL) {
-  await context.route(/\/(?:data\/cards|feeds\/listening)\.json(?:\?|$)/, async route => {
-    const listing = route.request().url().includes('/data/') ? JSON.parse(await readFile('web/data/cards.json','utf8')) : JSON.parse(await readFile('content/listening.json','utf8'));
+  await context.route(/\/(?:data\/cards|data\/listening|feeds\/listening)\.json(?:\?|$)/, async route => {
+    const listing = route.request().url().includes('/data/cards') ? JSON.parse(await readFile('web/data/cards.json','utf8')) : JSON.parse(await readFile('content/listening.json','utf8'));
     for (const c of Array.isArray(listing) ? listing : listing.cards) if (c.audio) c.audio.url = new URL('recordings/' + c.audio.url.split('/').pop(), base).href;
     return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(listing)});
   });
@@ -25,14 +25,14 @@ const page = await context.newPage(); const errors=[];
 page.on('pageerror', e => errors.push(e.message));
 try {
   await page.goto(base+'#library');
-  await page.locator('#library-search').fill('At the end');
-  await page.locator('[data-action="open-card"][data-id="c10-t1-s1-06"]').click();
+  await page.locator('#library-search').fill('This recording is copyright');
+  await page.locator('[data-action="open-card"][data-id="c10-t1-s1-sentence-002"]').click();
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller, undefined, { polling:100 });
   await page.locator('#card-dialog').getByRole('button',{name:'播放原音',exact:true}).click();
   await page.waitForFunction(() => window.__players.at(-1)?.currentTime > .15, undefined, { polling:100 });
   const first = await page.evaluate(() => ({ duration:window.__players.at(-1).duration, src:window.__players.at(-1).src, synth:window.__synthCount }));
-  assert.ok(first.duration > 1 && first.duration < 4); assert.equal(first.synth,0); assert.ok(first.src.includes('c10-t1-s1-06-'));
+  assert.ok(first.duration > 1 && first.duration < 4); assert.equal(first.synth,0); assert.ok(first.src.includes('c10-t1-s1-sentence-002-'));
   await page.getByRole('button',{name:'停止',exact:true}).click();
   await page.getByRole('button',{name:'原音三遍',exact:true}).click();
   await page.waitForFunction(() => document.querySelector('[data-original-status]')?.textContent.includes('共 3 遍'), undefined, { polling:100, timeout:45000 });

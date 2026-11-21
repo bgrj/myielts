@@ -21,12 +21,12 @@ test('all 38 listening cards have verified original voice files with correct has
 });
 test('a listening publication without original audio is rejected, not synthesized',async()=>{
   const feed=JSON.parse(await readFile('content/listening.json','utf8'));
-  assert.equal(validateFeed(feed,'listening').cards.length,2);
+  assert.equal(validateFeed(feed,'listening').cards.length,157);
   const bad=structuredClone(feed);delete bad.cards[0].audio;
   assert.throws(()=>validateFeed(bad,'listening'),/原音/);
 });
-test('old backup snapshots keep the verified original for an unchanged sentence',()=>{
-  const original=cards.find(c=>c.kind==='listening');const legacy={...original,note:'旧备份中的个人补充'};delete legacy.audio;delete legacy.audioSource;
+test('old backup snapshots keep the verified original for an unchanged sentence',async()=>{
+  const original=JSON.parse(await readFile('content/listening.json','utf8')).cards[0];const legacy={...original,note:'旧备份中的个人补充'};delete legacy.audio;delete legacy.audioSource;
   const merged=publishedCards([original,legacy],{});
   assert.deepEqual(merged[0].audio,original.audio);assert.equal(merged[0].note,legacy.note);
   const unavailable={...original,id:'pending-listening'};delete unavailable.audio;

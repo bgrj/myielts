@@ -17,7 +17,7 @@ try {
   await page.goto(base + '#settings');
   const originalBackupInput = await page.locator('input[data-file="backup"]').elementHandle();
   releaseFirst();
-  await revision(1);
+  await revision(originalReading.revision);
   assert.ok(await originalBackupInput.evaluate(el => el.isConnected), 'background updates must not replace a file input while the user is choosing a backup');
   await page.locator('[data-feed-status="reading"]').waitFor();
   assert.ok((await page.locator('[data-feed-status="reading"]').innerText()).includes('6 条'));
@@ -37,10 +37,10 @@ try {
   await page.locator('#library-search').fill('versatile');
   await page.locator('[data-action="open-card"][data-id="c17-t1-p2-126"]').click();
   assert.ok((await page.locator('#card-dialog').innerText()).includes('我的反馈'));
-  reading.revision = 2; reading.publisher = 'grok';
+  reading.revision = originalReading.revision + 1; reading.publisher = 'grok';
   reading.cards.find(c => c.id === 'c17-t1-p2-126').note = '网页自动更新验证：保留同一知识卡与原句。';
   await page.evaluate(() => window.dispatchEvent(new Event('online')));
-  await revision(2);
+  await revision(originalReading.revision + 1);
   assert.ok(!(await page.locator('#card-dialog').innerText()).includes('网页自动更新验证'));
   await page.getByRole('button', { name: '关闭知识卡' }).click();
   await page.locator('[data-action="open-card"][data-id="c17-t1-p2-126"]').click();
@@ -49,21 +49,21 @@ try {
   await page.locator('#card-dialog').getByRole('button', { name: '编辑', exact: true }).click();
   await page.locator('[name="note"]').fill('我的专属笔记');
   await page.getByRole('button', { name: '保存知识卡' }).click();
-  reading.revision = 3;
+  reading.revision = originalReading.revision + 2;
   reading.cards.find(c => c.id === 'c17-t1-p2-126').note = '第三版：bot 补充的发音和语法解释。';
   await page.evaluate(() => window.dispatchEvent(new Event('online')));
-  await revision(3);
+  await revision(originalReading.revision + 2);
   await page.locator('[data-action="open-card"][data-id="c17-t1-p2-126"]').click();
   assert.ok((await page.locator('#card-dialog').innerText()).includes('我的专属笔记'));
   await page.getByRole('button', { name: '采用 bot 版本，保留复习进度' }).click();
   assert.ok((await page.locator('#card-dialog').innerText()).includes('第三版'));
   await page.getByRole('button', { name: '关闭知识卡' }).click();
   // An invalid next publication must not replace valid cached lessons.
-  reading.revision = 4; reading.cards[0].feedback = '';
+  reading.revision = originalReading.revision + 3; reading.cards[0].feedback = '';
   await page.getByRole('link', { name: '资料与设置' }).click();
-  await page.getByRole('button', { name: '检查新反馈' }).click();
+  await page.getByRole('button', { name: '检查内容更新' }).click();
   await page.waitForFunction(() => document.querySelector('[data-feed-status="reading"]').textContent.includes('暂未连上'), undefined, { polling: 100 });
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.published.v1')).reading.revision), 3);
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.published.v1')).reading.revision), originalReading.revision + 2);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.waitForFunction(() => !!navigator.serviceWorker.controller, undefined, { polling: 100 });
   await context.unroute(/\/feeds\/(reading|listening)\.json(?:\?|$)/);

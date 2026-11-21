@@ -11,8 +11,13 @@
     "test:browser": "node tests/browser.mjs",
     "test:sync-browser": "node tests/live-content.mjs",
     "test:audio-browser": "node tests/original-audio.mjs",
-    "content:check": "node scripts/check-content.mjs"
+    "content:check": "node scripts/check-content.mjs",
+    "test:listening-browser": "node tests/listening-courses.mjs"
   },
-  "engines": { "node": ">=22" },
-  "devDependencies": { "playwright": "^1.56.1" }
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
 }

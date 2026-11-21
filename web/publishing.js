@@ -1,4 +1,5 @@
 import { validateCards, normalizeAnswer } from './core.js';
+import { validateLessons } from './listening.js';
 
 export const PUBLISHERS = {
   reading: { botId: '0eca5200-224b-4af8-b13a-6fd4f4762592', name: '雅思全套阅读练习指导大师', path: 'content/reading.json' },
@@ -15,12 +16,13 @@ export function validateFeed(data, kind) {
   const cards = validateCards(data.cards);
   for (const card of cards) {
     if (card.kind !== kind) throw new Error('阅读和听力必须写入各自的内容源');
-    if (!card.originalRef || !card.translation || !card.feedback || !card.note) throw new Error(`${card.id} 缺少个人反馈、原句出处、译文或解释`);
+    if (!card.originalRef || !card.translation || !card.note || (kind === 'reading' && !card.feedback)) throw new Error(`${card.id} 缺少原句出处、译文、解释或阅读反馈`);
     if (!card.sourceVerified) throw new Error(`${card.id} 的剑雅原句尚未核对`);
     if (kind === 'listening' && (!card.audio || !card.audioSource)) throw new Error(`${card.id} 缺少对应的剑雅原音及来源，需补齐后再发布听力练习`);
+    if (kind === 'listening' && (!card.lessonId || !card.order || !card.speaker)) throw new Error('听力需发布完整原声课程，包含说话人和句序');
     if (card.origin === '演示' || card.id.startsWith('qa-')) throw new Error('测试内容不能发布到学习源');
   }
-  return { schemaVersion: 1, kind, botId: PUBLISHERS[kind].botId, revision: data.revision, updatedAt: new Date(data.updatedAt).toISOString(), publisher: data.publisher, cards };
+  return { schemaVersion: 1, kind, botId: PUBLISHERS[kind].botId, revision: data.revision, updatedAt: new Date(data.updatedAt).toISOString(), publisher: data.publisher, ...(kind === 'listening' ? { lessons: validateLessons(data.lessons, cards) } : {}), cards };
 }
 
 export function acceptFeed(previous, incoming, kind) {
@@ -40,7 +42,7 @@ export function publishedCards(base, feeds, local = []) {
   base.forEach(add);
   for (const kind of Object.keys(PUBLISHERS)) for (const c of feeds[kind]?.cards || []) add(c);
   local.forEach(add);
-  return [...merged.values()];
+  return [...merged.values()].filter(c => c.kind !== 'listening' || c.lessonId);
 }
 
 export function preparePublication(existing, batch, base = [], now = new Date().toISOString()) {
@@ -53,15 +55,26 @@ export function preparePublication(existing, batch, base = [], now = new Date().
   for (const c of incoming) {
     const sameId = known.find(old => old.id === c.id);
     if (sameId && sameId.kind !== kind) throw new Error('不能把其他类型知识卡改为当前类型');
-    const duplicate = known.find(old => old.kind === kind && old.id !== c.id && normalizeAnswer(old.source) === normalizeAnswer(c.source) && normalizeAnswer(old.target) === normalizeAnswer(c.target));
+    const duplicate = kind === 'reading' && known.find(old => old.kind === kind && old.id !== c.id && normalizeAnswer(old.source) === normalizeAnswer(c.source) && normalizeAnswer(old.target) === normalizeAnswer(c.target));
     if (duplicate) throw new Error(`同一知识点已存在，请沿用 id: ${duplicate.id}`);
   }
   const cards = [...new Map([...previous.cards, ...incoming].map(c => [c.id, c])).values()];
-  return validateFeed({ ...previous, revision: previous.revision + 1, updatedAt: now, publisher: 'grok', cards }, kind);
+  return validateFeed({ ...previous, ...(kind === 'listening' && batch.lessons ? {lessons:batch.lessons} : {}), revision: previous.revision + 1, updatedAt: now, publisher: 'grok', cards }, kind);
 }
 
 export function botInstructions(kind) {
   const bot = PUBLISHERS[kind];
+  if (kind === 'listening') return `请把以下规则更新到我的听力 bot 长期记忆，替换之前“只练我反馈的38个难片段”的规则。
+你的 botId：${bot.botId}。学习网页：${LEARNING_URL}；仓库：https://github.com/bgrj/myielts ，分支 main。GitHub 已连接且有写权限。
+先读取 BOT-PUBLISHING.md、content/schema.json、content/listening.json、content/listening-source-transcripts.json、content/listening-audio-manifest.json 和 MATERIALS.md。Git LFS 真题必须读取实际文件，不能把指针当录音或教材。
+听力课程以对应完整原声为基础，按录音先后逐句听写、核对、练习和间隔复习，绝不是只抽取我反馈的不熟悉片段。ANNOUNCER 播音员的声音全部属于学习范围：出版/开场说明、考试规则、读题提示、示例说明、正式材料、段间提示、结束和检查答案提示，都不能因为不是人物对话而删掉。示例和正式录音中重复出现的句子按各自位置保留不同稳定 id；自然完整句为单位，保留原声中的真实短答与未说完的句子，不自行补写。
+目前网页只开放两个完整场景：self-drive 自驾游预订（剑雅10 Test1 Section1），leisure-club 健身俱乐部（剑雅10 Test1 Section2）。不要推荐、准备发布或自动加入第三部分。等我把这两部分练习、复习完一轮，并明确向你要求第三个场景时，才整理并发布第三部分；其课程 release 为 user-request，releaseNote 记录我的明确要求。不要仅凭时间过去或网页完成听写就推定我同意推进。
+我之后反馈听错、漏听、连读、弱读、缩写、重音、虚词、音标、语法疑问时，定位现有课程的稳定句子 id，在该句补充 feedback / personalError / pronunciation / ipa / grammar / note / collocations 等解释；保留完整课程所有句子、原句顺序、播音员、翻译、原声与 id。补充说明不能把完整课程缩减成反馈片段集，也不要重复建卡。
+每句必须配对应剑雅原声音频及中文整句翻译、说话人 speaker、lessonId、连续 order、精确出处 originalRef 和音频来源 audioSource。原句对照原录音与材料后才标 sourceVerified:true，不能用 TTS、合成声音、改写句或凭空猜测替代。优先复用 content/listening-audio-manifest.json 的现有逐句 MP3；修订片段需保留完整词头词尾，先上传带哈希文件名的真实 MP3 到 content/audio/，更新清单，再发布内容。每句音频不内嵌重复；网页提供原速、慢速、三遍且间隔3秒。缺原声或待核实的新增课程保留草稿，不声称上线。
+发布前读取最新 content/listening.json，合并说明并保持全部原句和 lessons 清单，revision 加1、updatedAt 写真实时间。优先使用已登录的 scripts/publish-feedback.mjs 校验后发布增量；也可用已授权 GitHub app 按同样校验和 SHA 冲突重读规则更新。课程 sentenceCount、announcerCount 必须与真实句子对应，order 从1连续；阅读内容不能修改。
+这条规则授权你将我的听力反馈整理成上述句子讲解并直接发布到 content/listening.json，以及必要的原声文件和来源清单；不用让我复制 JSON。不要改网页代码、整套母版资料或另一 bot 的内容，不上传整段私人聊天及凭据。若 Grok 当前仍弹出权限确认卡，请说明具体一步，不要问我要明文 token，不能虚称已发布。
+网页会按 10分钟重学以及1、3、7、14、30、60、120天阶梯，结合每句的忘了/吃力/记住/轻松评分安排复习。学习进度在我的浏览器，你不能凭聊天猜测完成状态。需要推进课程时以我的明确要求为准。
+发布后读取 ${LEARNING_URL}feeds/listening.json，核对 revision、更新句子 id、两课程完整句序与播音员句数，回复真实提交链接、更新数和网页地址。失败则保留待发布内容并说明原因。首次先核对现有两个完整场景和规则，保存记忆即可；不要额外推送新场景。`;
   return `请为我启用“反馈后更新 MyIELTS”并保存为长期工作规则。你负责${kind === 'reading' ? '阅读' : '听力'}，botId 是 ${bot.botId}。
 学习网址：${LEARNING_URL}
 源码与内容仓库：https://github.com/bgrj/myielts ，分支 main。

@@ -39,11 +39,11 @@ try {
   await page.locator('#card-dialog').getByRole('button', { name: /^收藏 housing/ }).click();
   await page.getByRole('button', { name: '关闭知识卡' }).click();
   await page.getByRole('link', { name: '随手练习' }).click();
-  await page.getByRole('button', { name: /精听听写/ }).click();
+  await page.locator('[data-action="lesson"][data-lesson="self-drive"][data-mode="continue"]').click();
   assert.ok(await page.getByRole('button', { name: '播放原音' }).isVisible());
   await page.getByRole('button', { name: '回忆好了，核对答案' }).click();
-  await page.getByRole('button', { name: '继续练习' }).click();
-  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).events.length), 5);
+  await page.getByRole('button', { name: /^记住/ }).click();
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).events.length), 6);
   await page.getByRole('button', { name: '稍后继续' }).click();
   await page.getByRole('link', { name: '资料与设置' }).click();
   await page.locator('#daily-new').fill('7'); await page.locator('#daily-new').blur();
@@ -52,13 +52,13 @@ try {
   const download = await downloadPromise;
   await download.saveAs('.test-artifacts/backup.json');
   const exported = JSON.parse(await readFile('.test-artifacts/backup.json', 'utf8'));
-  assert.equal(exported.cards.length, 251); assert.equal(exported.settings.dailyNew, 7);
+  assert.equal(exported.cards.length, 370); assert.equal(exported.settings.dailyNew, 7);
   const originalEvents = exported.events.length;
   const restoreContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const restorePage = await restoreContext.newPage();
   await restorePage.goto(base + '#settings');
   await restorePage.locator('input[data-file="backup"]').setInputFiles('.test-artifacts/backup.json');
-  await restorePage.waitForFunction(() => JSON.parse(localStorage.getItem('myielts.state.v1') || '{}').events?.length === 5);
+  await restorePage.waitForFunction(() => JSON.parse(localStorage.getItem('myielts.state.v1') || '{}').events?.length === 6);
   assert.equal(await restorePage.evaluate(() => JSON.parse(localStorage.getItem('myielts.state.v1')).settings.dailyNew), 7);
   await restoreContext.close();
   // Invalid imports must not partially write.

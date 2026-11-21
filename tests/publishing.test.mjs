@@ -14,10 +14,10 @@ function storage(initial = {}) {
   return { getItem: key => values.get(key) || null, setItem: (key, value) => values.set(key, value) };
 }
 test('real screenshot feedback is mapped to existing cards, not duplicate lessons', () => {
-  assert.equal(reading.cards.length, 6); assert.equal(listening.cards.length, 2);
-  assert.equal(publishedCards(base, { reading, listening }).length, 251);
+  assert.equal(reading.cards.length, 6); assert.equal(listening.cards.length, 157);
+  assert.equal(publishedCards(base, { reading, listening }).length, 370);
   assert.ok(reading.cards.find(c => c.target === 'versatile').feedback.includes('再加几个'));
-  assert.ok(listening.cards[0].feedback.includes('Of?'));
+  assert.equal(listening.lessons.length, 2); assert.equal(listening.cards[0].speaker, 'ANNOUNCER');
 });
 test('publication requires verified original context, feedback and translation', () => {
   for (const key of ['feedback', 'translation', 'originalRef', 'note']) {
@@ -63,7 +63,7 @@ test('restoring a full backup preserves snapshots without masking future bot upd
   const backup = { ...state, cards: all.map(c => c.id === custom.id ? custom : c), localCardIds: [custom.id] };
   const restored = validateBackup(backup);
   assert.equal(restored.cards.length, 1);
-  assert.equal(restored.librarySnapshot.length, 250);
+  assert.equal(restored.librarySnapshot.length, 212);
   const remote = clone(reading); remote.cards[1].note = '恢复后 bot 的新解释';
   const merged = publishedCards([...base, ...restored.librarySnapshot], { reading: remote }, restored.cards);
   assert.equal(merged.find(c => c.id === remote.cards[1].id).note, '恢复后 bot 的新解释');
@@ -71,7 +71,7 @@ test('restoring a full backup preserves snapshots without masking future bot upd
 });
 test('original audio supports exact segments, rejects unsafe links and invalid ranges', () => {
   const card = { ...listening.cards[0], audio: { url: 'https://example.com/original.mp3', start: 12.5, end: 16 } };
-  assert.equal(validateFeed({ ...listening, cards: [card] }, 'listening').cards[0].audio.start, 12.5);
+  assert.equal(validateFeed({ ...listening, cards: [card, ...listening.cards.slice(1)] }, 'listening').cards[0].audio.start, 12.5);
   for (const audio of [{ url: 'javascript:alert(1)', start: 0, end: 1 }, { url: 'https://x:y@example.com/a.mp3', start: 0, end: 1 }, { url: 'https://example.com/a.mp3', start: 5, end: 3 }, { url: 'https://example.com/a.mp3', start: 0, end: 301 }]) assert.throws(() => validateFeed({ ...listening, cards: [{ ...card, audio }] }, 'listening'));
 });
 test('live fetch validates each source, saves offline cache and deduplicates parallel checks', async () => {

@@ -23,7 +23,7 @@ export function queueFor(cards, state, now = Date.now(), kind = 'all') {
     .sort((a, b) => state.progress[a.id].due - state.progress[b.id].due);
   const started = new Set(state.events.filter(e => e.day === dayKey(now) && e.isNew).map(e => e.cardId)).size;
   const allowance = Math.max(0, state.settings.dailyNew - started);
-  const fresh = ready.filter(c => !state.progress[c.id] && (kind === 'all' || c.kind === kind));
+  const fresh = ready.filter(c => !state.progress[c.id] && (kind === 'listening' ? c.kind === 'listening' : c.kind === 'reading') && (kind === 'all' || c.kind === kind));
   // Interleave sources: a day's new cards need not all come from one passage.
   const groups = new Map();
   for (const c of fresh) { if (!groups.has(c.source)) groups.set(c.source, []); groups.get(c.source).push(c); }
@@ -48,7 +48,7 @@ export function validateCards(cards) {
     for (const key of ['target', 'sentence', 'focus', 'source']) if (typeof card[key] !== 'string' || !card[key].trim()) throw new Error(prefix + `缺少 ${key}`);
     if (!card.sentence.toLowerCase().includes(card.focus.toLowerCase())) throw new Error(prefix + 'focus 必须出现在原句中');
     const result = { id: card.id, kind: card.kind };
-    for (const key of ['target', 'meaning', 'sentence', 'focus', 'source', 'title', 'translation', 'ipa', 'note', 'collocations', 'related', 'etymology', 'personalError', 'originalRef', 'origin', 'feedback', 'speaker', 'pronunciation', 'grammar', 'audioSource']) {
+    for (const key of ['target', 'meaning', 'sentence', 'focus', 'source', 'title', 'translation', 'ipa', 'note', 'collocations', 'related', 'etymology', 'personalError', 'originalRef', 'origin', 'feedback', 'speaker', 'pronunciation', 'grammar', 'audioSource', 'sectionGroup', 'sourceTurn', 'translationContext']) {
       const value = card[key] ?? '';
       if (typeof value !== 'string' || value.length > 12000) throw new Error(prefix + `${key} 需为不超过 12,000 字的文本`);
       result[key] = value.trim();
@@ -57,6 +57,10 @@ export function validateCards(cards) {
     result.tags = Array.isArray(card.tags) ? card.tags.filter(x => typeof x === 'string').slice(0, 10).map(x => x.slice(0, 30)) : [];
     result.fragment = card.fragment === true;
     result.sourceVerified = card.sourceVerified === true;
+    if (card.lessonId !== undefined) {
+      if (card.kind !== 'listening' || !validId(card.lessonId) || !Number.isInteger(card.order) || card.order < 1 || card.order > 2000) throw new Error(prefix + '听力课程编号或句序无效');
+      result.lessonId = card.lessonId; result.order = card.order;
+    }
     if (card.audio != null) {
       if (!plain(card.audio) || typeof card.audio.url !== 'string' || card.audio.url.length > 2000) throw new Error(prefix + '原音信息无效');
       let url; try { url = new URL(card.audio.url); } catch { throw new Error(prefix + '原音 URL 无效'); }

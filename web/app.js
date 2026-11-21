@@ -1,6 +1,7 @@
 import { DAY, dayKey, emptyState, schedule, queueFor, checkAnswer, validateCards, validateBackup, mergeBackup } from './core.js';
-import { PUBLISHERS, LEARNING_URL, publishedCards, botInstructions } from './publishing.js';
+import { PUBLISHERS, LEARNING_URL, publishedCards, botInstructions, validateFeed } from './publishing.js';
 import { FeedClient } from './feed-client.js';
+import { lessonCards, lessonQueue } from './listening.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -76,7 +77,7 @@ function updateFeedStatus() {
   }
 }
 function syncPanel() {
-  return `<section class="panel wide sync-panel"><h2>反馈给 Grok，内容自动到这里</h2><p>按平时的方式反馈生词、追加表达或没听清的片段；bot 整理并发布后，学习、练习和复习会一起更新。</p><div class="sync-sources">${Object.entries(PUBLISHERS).map(([kind, bot]) => `<div><h3>${kind === 'reading' ? icon('book') : icon('headphones')} ${esc(bot.name)}</h3><p class="help-text" data-feed-status="${kind}" role="status">正在检查发布状态…</p><button class="btn btn-secondary" data-action="copy-bot-setup" data-kind="${kind}">复制${kind === 'reading' ? '阅读' : '听力'} bot 配置指令</button></div>`).join('')}</div><p class="help-text">首次只需把配置指令发给对应 bot，并在 Grok 里连接 GitHub、授予 bgrj/myielts 写入权限。这里的“通道就绪”不代表 bot 已完成授权；首次真实发布后会显示发布版本。</p><div class="settings-actions"><button class="btn btn-secondary" data-action="sync-content">检查新反馈</button><a class="text-button" href="https://github.com/bgrj/myielts/blob/main/BOT-PUBLISHING.md" target="_blank" rel="noopener">查看连接说明</a></div><p class="help-text">网页打开时每分钟检查，回到页面时也会检查。正在作答或编辑时，更新留到结束后显示。常用入口：<a class="inline-link" href="${LEARNING_URL}">ourbeings.com/ielts/</a></p></section>`;
+  return `<section class="panel wide sync-panel"><h2>和 Grok 一起更新学习本</h2><p>阅读根据你的难点反馈补充原句讲解；听力按完整原声逐句听写，反馈用于补充对应句子的讲解。新听力场景只在你明确要求后加入。</p><div class="sync-sources">${Object.entries(PUBLISHERS).map(([kind, bot]) => `<div><h3>${kind === 'reading' ? icon('book') : icon('headphones')} ${esc(bot.name)}</h3><p class="help-text" data-feed-status="${kind}" role="status">正在检查发布状态…</p><button class="btn btn-secondary" data-action="copy-bot-setup" data-kind="${kind}">复制${kind === 'reading' ? '阅读' : '听力'} bot 配置指令</button></div>`).join('')}</div><p class="help-text">把各自的指令发给对应 bot，保存为长期规则。首次真实发布后显示 Bot 发布版本，本站不会读取私人聊天。</p><div class="settings-actions"><button class="btn btn-secondary" data-action="sync-content">检查内容更新</button><a class="text-button" href="https://github.com/bgrj/myielts/blob/main/BOT-PUBLISHING.md" target="_blank" rel="noopener">查看连接说明</a></div><p class="help-text">打开时每分钟检查，回到页面时也会检查。作答或编辑期间的更新留到结束后显示。</p></section>`;
 }
 function cardById(id) { return cards().find(c => c.id === id); }
 function formatDate(value, full = false) {
@@ -124,7 +125,7 @@ function renderToday() {
   const max = Math.max(...dayCounts, 1);
   const sourceGroups = [...new Map(all.map(c => [c.source, { title: c.title, kind: c.kind }])).entries()];
   $('#main').innerHTML = `${intro('MAKE ROOM FOR WHAT YOU KNOW', '每一句，都记住一点。', '回到熟悉的剑雅原句，今天也往前走一小步。', `<span class="date-note">${icon('leaf')}每天一点，慢慢记牢</span>`)}
-    <section class="hero" aria-label="今日复习计划"><div><span class="eyebrow">YOUR DAILY MOMENT</span><h2>${queue.length ? '把学过的，变成记住的。' : reviewed ? '今天的回忆，已好好收下。' : '从熟悉的一句话开始。'}</h2><p>今天有 ${due} 条到期复习${fresh ? `，再认识 ${fresh} 个旧难点` : ''}。<br>留几分钟给自己，让记忆再清晰一点。</p><div class="hero-actions"><button class="btn btn-lime" data-action="start-review" ${queue.length ? '' : 'disabled'}>${icon('practice')}${queue.length ? '开始今日学习' : '目前没有待学任务'}</button><a class="btn-quiet" href="#library">先随便看看</a></div></div><div class="hero-art" aria-hidden="true"><div class="orbital"></div><div class="orbital second"></div><span class="art-spark">✦</span><div class="paper-stack"><span class="art-text">Aa.</span><span class="art-line"></span><span class="art-line"></span><span class="art-line short"></span><span class="art-check">${icon('check')}</span></div></div></section>
+    <section class="hero" aria-label="今日复习计划"><div><span class="eyebrow">YOUR DAILY MOMENT</span><h2>${queue.length ? '把学过的，变成记住的。' : reviewed ? '今天的回忆，已好好收下。' : '从熟悉的一句话开始。'}</h2><p>今天有 ${due} 条到期复习${fresh ? `，再认识 ${fresh} 个旧难点` : ''}。<br>留几分钟给自己，让记忆再清晰一点。</p><div class="hero-actions"><button class="btn btn-lime" data-action="start-review" ${queue.length ? '' : 'disabled'}>${icon('practice')}${queue.length ? '开始今日学习' : '目前没有待学任务'}</button><a class="btn-quiet" href="#practice">原声逐句听写</a><a class="btn-quiet" href="#library">先随便看看</a></div></div><div class="hero-art" aria-hidden="true"><div class="orbital"></div><div class="orbital second"></div><span class="art-spark">✦</span><div class="paper-stack"><span class="art-text">Aa.</span><span class="art-line"></span><span class="art-line"></span><span class="art-line short"></span><span class="art-check">${icon('check')}</span></div></div></section>
     <div class="stats-grid"><div class="stat"><span class="stat-icon">${icon('check')}</span><div><div class="stat-label">今日已学</div><div class="stat-value">${totalToday()}<span>条知识</span></div></div></div><div class="stat"><span class="stat-icon">${icon('sun')}</span><div><div class="stat-label">连续学习</div><div class="stat-value">${streak()}<span>天</span></div></div></div><div class="stat"><span class="stat-icon">${icon('layers')}</span><div><div class="stat-label">已开始积累</div><div class="stat-value">${reviewed}<span>/ ${all.length} 条</span></div></div></div></div>
     <div class="dashboard-grid"><section><div class="section-heading"><h2>${queue.length ? '今天，从这一句开始' : '再看一句，温故知新'}</h2><a href="#library">查看知识库 ${icon('book')}</a></div>${candidate ? `<article class="recommend-card"><div class="card-topline">${badge(candidate)}<span class="source-short">${esc(candidate.source.replace('剑雅 ', 'CAMBRIDGE '))}</span></div><p class="english" lang="en">${highlighted(candidate)}</p><p class="meaning">${esc(candidate.meaning || candidate.translation || '回到原句，听清那些容易错过的声音。')}</p><div class="card-bottom"><span class="tiny-label">${esc(candidate.target)}</span><button class="text-button dark" data-action="open-card" data-id="${esc(candidate.id)}">展开学习 ${icon('book')}</button></div></article>` : '<div class="panel">添加第一条知识点，开始积累。</div>'}</section>
     <section><div class="section-heading"><h2>接下来的复习节奏</h2><span class="tiny-label">未来 7 天</span></div><div class="week-panel"><p class="week-label">已学知识的到期安排</p><div class="week-chart" role="img" aria-label="${esc(dayCounts.map((n, i) => `${i ? formatDate(now + i * DAY) : '今天'} ${n}条`).join('，'))}">${dayCounts.map((n, i) => `<div class="day-bar"><span class="bar-value">${n}</span><div class="bar-track"><div class="bar-fill" style="height:${Math.max(4, n / max * 80)}px"></div></div><span>${i ? formatDate(now + i * DAY) : '今天'}</span></div>`).join('')}</div><p class="week-footnote">${icon('clock')}${reviewed ? '按每次回忆的难易，调整下次见面。' : '学完第一条，就会有你的复习安排。'}</p></div></section></div>
@@ -140,13 +141,28 @@ function renderLibrary(restoreSearch = false) {
   if (restoreSearch) { const input = $('#library-search'); input.focus(); input.setSelectionRange(input.value.length, input.value.length); }
 }
 function renderPractice() {
-  $('#main').innerHTML = `${intro('A FEW MINUTES, A LITTLE CLEARER', '换个方式，再记一次。', '自由练习不改变复习安排；想记录进度，请回到今日学习。')}
+  $('#main').innerHTML = `${intro('A FEW MINUTES, A LITTLE CLEARER', '换个方式，再记一次。', '听力逐句听写会保存复习安排；阅读自由练习用于随手巩固。')}
+    ${listeningCourses()}
     <div class="practice-grid">${[
       ['cloze', 'book', '原句填空', '把原句里熟悉又模糊的表达，亲自填回来。', 'reading'],
-      ['dictation', 'headphones', '精听听写', '听一句，写一句，找出弱读和连读藏在哪里。', 'listening'],
-      ['recall', 'practice', '中英回忆', '先看中文含义，尝试复现表达，再用剑雅原句核对。', 'all'],
+      ['recall', 'practice', '中英回忆', '先看中文含义，尝试复现表达，再用剑雅原句核对。', 'reading'],
     ].map(([mode, ico, title, desc, kind]) => `<button class="practice-tile" data-action="practice" data-mode="${mode}" data-kind="${kind}"><span class="stat-icon">${icon(ico)}</span><h2>${title}</h2><p>${desc}</p><span class="text-button dark">练习 5 条 · 约 3 分钟</span></button>`).join('')}</div>
     <div class="study-note">${icon('leaf')}<span>先回忆，再看答案。记不起来也没关系：找到自己卡住的地方，就是这一次练习的收获。</span></div><section class="panel" style="margin-top:25px"><h2>剑雅原音，逐句精听</h2><p>听力知识卡使用对应的剑雅原录音。你也可以选择本地整段录音，结合原段落回听。</p><label class="btn btn-secondary import-label" style="margin-top:15px">${icon('headphones')} 选择本地录音<input type="file" class="file-input" data-file="audio" accept="audio/*"></label><p class="help-text">音频只在当前设备的本次会话中播放，不上传。使用播放器自行定位到要练习的句子。</p>${audioElement()}</section>`;
+}
+function listeningCourses() {
+  const lessons = publishedFeeds.listening?.lessons || [];
+  return `<section class="listening-courses"><div class="section-heading"><h2>${icon('headphones')} 原声逐句听写</h2><span class="tiny-label">完整场景 · 包含 ANNOUNCER</span></div><p class="subtitle">按原声顺序，先听、再写、核对后评分。随时暂停，下次从尚未练习的句子继续。</p><div class="source-grid">${lessons.map(l => {
+    const group = lessonCards(cards(), l.id), done = group.filter(c => state.progress[c.id]).length;
+    const due = lessonQueue(cards(), state, l.id, 'review').length;
+    return `<article class="panel course-card"><span class="eyebrow">${esc(l.source)}</span><h2>${esc(l.title)}</h2><p>${group.length} 句原声 · 含播音员 ${l.announcerCount} 句</p><div class="progress-track" aria-label="已练习 ${done} / ${group.length} 句"><div class="progress-fill" style="width:${done / group.length * 100}%"></div></div><p class="help-text">已练 ${done}/${group.length} · 到期复习 ${due} 句</p><div class="settings-actions"><button class="btn" data-action="lesson" data-lesson="${esc(l.id)}" data-mode="continue" ${done === group.length ? 'disabled' : ''}>${done === group.length ? '本轮听写已完成' : done ? '继续逐句听写' : '开始逐句听写'}</button><button class="btn btn-secondary" data-action="lesson" data-lesson="${esc(l.id)}" data-mode="review" ${due ? '' : 'disabled'}>复习到期句</button><button class="text-button dark" data-action="lesson" data-lesson="${esc(l.id)}" data-mode="restart">从头再练</button></div><details><summary class="help-text">查看原声句序与说话人</summary><ol class="sentence-list">${group.map(c => `<li><button class="text-button dark" data-action="open-card" data-id="${esc(c.id)}"><span class="tiny-label">${esc(c.speaker)}</span> ${esc(c.sentence)}</button></li>`).join('')}</ol></details></article>`;
+  }).join('')}</div><p class="help-text">目前只学习自驾游和健身俱乐部。完成一轮练习与复习后，等你向 bot 明确要求，再加入第三个场景。</p></section>`;
+}
+function startLesson(lessonId, mode) {
+  const list = lessonQueue(cards(), state, lessonId, mode);
+  if (!list.length) { toast(mode === 'review' ? '暂时没有到期句，按安排再来复习。' : '本轮逐句听写已完成，可选择从头再练。'); return; }
+  stopMedia();
+  session = { ids:list.map(c => c.id), index:0, revealed:false, typed:'', practice:false, mode:'dictation', lessonId, lessonMode:mode };
+  lastRating = null; renderSession(); window.scrollTo({top:0});
 }
 function audioElement() { return audioURL ? `<audio class="local-audio" controls src="${esc(audioURL)}" aria-label="本地剑雅录音"></audio>` : ''; }
 function remoteAudio(c) {
@@ -203,6 +219,7 @@ function openCard(id) {
   if (!dialog.open) dialog.showModal();
 }
 function startSession({ practice = false, mode = 'auto', kind = 'all' } = {}) {
+  if (kind === 'listening' || mode === 'dictation') { renderPractice(); return; }
   let list = practice ? cards().filter(c => (kind === 'all' || c.kind === kind) && (c.kind !== 'listening' || c.audio)).sort(() => Math.random() - 0.5).slice(0, 5) : queueFor(cards(), state);
   if (!list.length) { toast('目前没有待学内容，可以去知识库看看。'); return; }
   session = { ids: list.map(c => c.id), index: 0, revealed: false, typed: '', practice, mode };
@@ -216,7 +233,7 @@ function renderSession() {
   if (!c) { renderDone(); return; }
   const mode = session.mode === 'auto' ? (c.kind === 'listening' ? 'dictation' : 'cloze') : session.mode;
   const revealing = session.revealed;
-  $('#main').innerHTML = `<div class="review-top"><div><h2>${session.practice ? '随手练习' : '今日学习'}</h2><p>${session.index + 1} / ${session.ids.length} · ${mode === 'dictation' ? '听一句，写下来' : mode === 'cloze' ? '把原句补完整' : '从中文回到英文'}</p></div><div><button class="btn btn-quiet" data-action="undo" ${lastRating ? '' : 'disabled'}>撤销上一条</button><button class="btn btn-secondary" data-action="exit-session">稍后继续</button></div></div><div class="progress-track"><div class="progress-fill" style="width:${session.index / session.ids.length * 100}%"></div></div>
+  $('#main').innerHTML = `<div class="review-top"><div><h2>${session.lessonId ? esc(c.title) + ' · 逐句听写' : session.practice ? '随手练习' : '今日学习'}</h2><p>${session.index + 1} / ${session.ids.length} · ${c.lessonId ? `原声第 ${c.order} 句 · ${esc(c.speaker)} · ` : ''}${mode === 'dictation' ? '听一句，写下来' : mode === 'cloze' ? '把原句补完整' : '从中文回到英文'}</p></div><div><button class="btn btn-quiet" data-action="undo" ${lastRating ? '' : 'disabled'}>撤销上一条</button><button class="btn btn-secondary" data-action="exit-session">稍后继续</button></div></div><div class="progress-track"><div class="progress-fill" style="width:${session.index / session.ids.length * 100}%"></div></div>
     <article class="review-card"><div class="card-topline">${badge(c)}<span class="source-short">${esc(c.source)}</span></div>
     ${mode === 'dictation' && !revealing ? `<p class="prompt">先听对应的剑雅原音，再尝试写下句子。</p>${originalControls(c)}${audioElement()}` : ''}
     ${!revealing && mode === 'cloze' ? `<p class="english" lang="en">${highlighted(c, true)}</p><p class="prompt">中文提示：${esc(c.meaning || c.translation)}</p>` : ''}
@@ -292,6 +309,7 @@ document.addEventListener('click', async event => {
   const button = event.target.closest('[data-action]'); if (!button || button.disabled) return;
   const { action, id } = button.dataset;
   if (action === 'start-review') startSession();
+  if (action === 'lesson') startLesson(button.dataset.lesson, button.dataset.mode);
   if (action === 'sync-content') refreshPublished(true);
   if (action === 'copy-bot-setup') {
     const instruction = botInstructions(button.dataset.kind);
@@ -418,6 +436,12 @@ async function init() {
   try {
     const response = await fetch('./data/cards.json'); if (!response.ok) throw new Error();
     baseCards = validateCards(await response.json());
+    const listeningResponse = await fetch('./data/listening.json');
+    if (!listeningResponse.ok) throw new Error();
+    const initialListening = validateFeed(await listeningResponse.json(), 'listening');
+    if (!publishedFeeds.listening || publishedFeeds.listening.revision < initialListening.revision) publishedFeeds.listening = initialListening;
+    feedClient.feeds.listening = publishedFeeds.listening;
+    baseCards = [...baseCards.filter(c => c.kind === 'reading'), ...initialListening.cards];
     route = ['today', 'practice', 'library', 'settings'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'today';
     $('#today-date').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: 'Asia/Shanghai', month: 'long', day: 'numeric', weekday: 'long' }).format(Date.now());
     render();

@@ -46,6 +46,49 @@
       "items": {
         "$ref": "#/$defs/card"
       }
+    },
+    "lessons": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "source",
+          "sentenceCount",
+          "announcerCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sentenceCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "announcerCount": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "release": {
+            "enum": [
+              "initial",
+              "user-request"
+            ]
+          },
+          "releaseNote": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "allOf": [
@@ -68,7 +111,10 @@
                 "kind": {
                   "const": "reading"
                 }
-              }
+              },
+              "required": [
+                "feedback"
+              ]
             }
           }
         }
@@ -96,11 +142,17 @@
               },
               "required": [
                 "audio",
-                "audioSource"
+                "audioSource",
+                "speaker",
+                "lessonId",
+                "order"
               ]
             }
           }
-        }
+        },
+        "required": [
+          "lessons"
+        ]
       }
     }
   ],
@@ -117,7 +169,6 @@
         "source",
         "originalRef",
         "translation",
-        "feedback",
         "note",
         "sourceVerified"
       ],
@@ -201,8 +252,7 @@
         },
         "feedback": {
           "type": "string",
-          "maxLength": 12000,
-          "minLength": 1
+          "maxLength": 12000
         },
         "speaker": {
           "type": "string",
@@ -258,6 +308,27 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 12000
+        },
+        "sectionGroup": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "sourceTurn": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "translationContext": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "lessonId": {
+          "type": "string",
+          "maxLength": 12000
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000
         }
       }
     }
